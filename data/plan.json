@@ -1,0 +1,117 @@
+{
+    "resource_changes": [
+        {
+            "type": "aiven_kafka_topic",
+            "name": "topic-1",
+            "change": {
+                "actions": ["create"],
+                "before": {},
+                "after": {
+                    "type": "aiven_kafka_topic",
+                    "name": "topic-1",
+                    "values": {
+                        "topic_name": "topic-1",
+                        "owner_user_group_id": "10"
+                    }
+                }
+            }
+        },
+        {
+            "type": "aiven_kafka_topic",
+            "name": "topic-2",
+            "change": {
+                "actions": ["update"],
+                "before": {
+                    "type": "aiven_kafka_topic",
+                    "name": "topic-2",
+                    "values": {
+                        "topic_name": "topic-2"
+                    }
+                },
+                "after": {
+                    "type": "aiven_kafka_topic",
+                    "name": "topic-10",
+                    "values": {
+                        "topic_name": "topic-10"
+                    }
+                }
+            }
+        },
+        {
+            "type": "aiven_kafka_topic",
+            "name": "topic-3",
+            "change": {
+                "actions": ["delete"],
+                "before": {
+                    "type": "aiven_kafka_topic",
+                    "name": "topic-3",
+                    "values": {
+                        "topic_name": "topic-3"
+                    }
+                },
+                "after": {}
+            }
+        }
+    ],
+    "planned_values": {
+        "root_module": {
+                        "resources": [
+                            {
+                                "type": "aiven_external_identity",
+                                "name": "alice",
+                                "values": {
+                                    "external_user_id": "alice",
+                                    "internal_user_id": "1"
+                                }
+                            },
+                            {
+                                "type": "aiven_external_identity",
+                                "name": "bob",
+                                "values": {
+                                    "external_user_id": "bob",
+                                    "internal_user_id": "2"
+                                }
+                            },
+                            {
+                                "type": "aiven_organization_user_group",
+                                "name": "owners",
+                                "values": {
+                                    "organization_id": "1",
+                                    "name": "owners",
+                                    "description": "owners group"
+                                }
+                            },
+                            {
+                                "type": "aiven_organization_user_group_member",
+                                "name": "alice",
+                                "values": {
+                                    "user_id": "1",
+                                    "group_id": "1"
+                                }
+                            },
+                            {
+                                "type": "aiven_organization_user_group_member",
+                                "name": "bob",
+                                "values": {
+                                    "user_id": "2",
+                                    "group_id": "1"
+                                }
+                            },
+                            {
+                                "type": "aiven_kafka_topic",
+                                "name": "topic-1",
+                                "values": {
+                                    "topic_name": "topic-1"
+                                }
+                            },
+                            {
+                                "type": "aiven_kafka_topic",
+                                "name": "topic-10",
+                                "values": {
+                                    "topic_name": "topic-10"
+                                }
+                            }
+                        ]
+                    }
+    }
+}
