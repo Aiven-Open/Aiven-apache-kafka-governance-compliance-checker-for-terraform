@@ -85,10 +85,10 @@ func main() {
 		Messages: make([]Message, 0),
 	}
 
-	var requester = ExternalIdentity(*requesterId, &plan)
+	var requester = GetExternalIdentity(*requesterId, &plan)
 	var approvers []*PlanResource
 	for _, approverId := range strings.Split(*approverIds, ",") {
-		approver := ExternalIdentity(approverId, &plan)
+		approver := GetExternalIdentity(approverId, &plan)
 		if approver != nil {
 			approvers = append(approvers, approver)
 		}
@@ -121,7 +121,7 @@ func CheckTopicRequesterAndApprovers(requester *PlanResource, approvers []*PlanR
 		return
 	}
 
-	membership := UserGroupMembership(requesterId, ownerGroupId, plan)
+	membership := GetUserGroupMembership(requesterId, ownerGroupId, plan)
 	if membership == nil {
 		result.Ok = false
 		result.Messages = append(result.Messages, Message{
@@ -135,7 +135,7 @@ func CheckTopicRequesterAndApprovers(requester *PlanResource, approvers []*PlanR
 	var approved bool
 	for _, approver := range approvers {
 		approverId, _ := approver.Values["internal_user_id"].(string)
-		membership := UserGroupMembership(approverId, ownerGroupId, plan)
+		membership := GetUserGroupMembership(approverId, ownerGroupId, plan)
 		if membership != nil {
 			approved = true
 		}
@@ -152,7 +152,7 @@ func CheckTopicRequesterAndApprovers(requester *PlanResource, approvers []*PlanR
 	}
 }
 
-func ExternalIdentity(userId string, plan *Plan) *PlanResource {
+func GetExternalIdentity(userId string, plan *Plan) *PlanResource {
 	for _, resource := range plan.PlannedValues.RootModule.Resources {
 		if resource.Type == AivenExternalIdentity {
 			extUserId, _ := resource.Values["external_user_id"].(string)
@@ -164,7 +164,7 @@ func ExternalIdentity(userId string, plan *Plan) *PlanResource {
 	return nil
 }
 
-func UserGroupMembership(userId string, groupId string, plan *Plan) *PlanResource {
+func GetUserGroupMembership(userId string, groupId string, plan *Plan) *PlanResource {
 	for _, resource := range plan.PlannedValues.RootModule.Resources {
 		if resource.Type == AivenOrganizationUserGroupMember {
 			memberUserId, _ := resource.Values["user_id"].(string)
