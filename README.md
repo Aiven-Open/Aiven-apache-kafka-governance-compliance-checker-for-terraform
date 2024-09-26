@@ -21,8 +21,11 @@ the github marketplace for wider audience.
 ```bash
 terraform plan -out="./plan"
 terraform show -json ./plan > ./plan.json
-go run main.go -plan="./plan.json" -requester="alice" -approvers="bob,charlie"
+go build
+./checker -plan="./data/plan.json" -requester="alice" -approvers="bob,charlie
 ```
+[comment]: <> (go run main.go -plan="./plan.json" -requester="alice" -approvers="bob,charlie")
+[comment]: <> (doesn't work for multi-file go projects?)
 
 # Example output
 ```json
@@ -43,4 +46,11 @@ go run main.go -plan="./plan.json" -requester="alice" -approvers="bob,charlie"
     }
   ] 
 }
+```
+
+# How to run as a microservice
+```bash
+1. go build
+2. ./checker -micro
+3. Create a HTTP POST request to /check with curl or Postman etc.
 ```

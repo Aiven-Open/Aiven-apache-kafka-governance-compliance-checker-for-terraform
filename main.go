@@ -57,29 +57,42 @@ type (
 )
 
 func main() {
+	microservice := flag.Bool("micro", false, "start microservice server process")
 	pathToPlan := flag.String("plan", "", "path to a file with terraform plan output in json format")
 	requesterId := flag.String("requester", "", "user identified as the requester of the change")
 	approverIds := flag.String("approvers", "", "comma separated list of users identified as the approvers of the change")
 	flag.Parse()
 
-	if *pathToPlan == "" || *requesterId == "" || *approverIds == "" {
-		os.Stderr.WriteString("missing required arguments")
-		os.Exit(1)
-	}
+	if *microservice {
+		InitMicroserviceServer()
+	} else {
 
-	planContent, err := os.ReadFile(*pathToPlan)
-	if err != nil {
-		os.Stderr.WriteString(err.Error())
-		os.Exit(1)
-	}
+		if *pathToPlan == "" || *requesterId == "" || *approverIds == "" {
+			os.Stderr.WriteString("missing required arguments")
+			os.Exit(1)
+		}
 
-	var plan Plan
-	err = json.Unmarshal(planContent, &plan)
-	if err != nil {
-		os.Stderr.WriteString(err.Error())
-		os.Exit(1)
-	}
+		planContent, err := os.ReadFile(*pathToPlan)
+		if err != nil {
+			os.Stderr.WriteString(err.Error())
+			os.Exit(1)
+		}
 
+		var plan Plan
+		err = json.Unmarshal(planContent, &plan)
+		if err != nil {
+			os.Stderr.WriteString(err.Error())
+			os.Exit(1)
+		}
+
+		result := CheckPlan(requesterId, approverIds, plan)
+
+		output, _ := json.Marshal(result)
+		os.Stdout.Write(output)
+	}
+}
+
+func CheckPlan(requesterId *string, approverIds *string, plan Plan) Result {
 	result := Result{
 		Ok:       true,
 		Messages: make([]Message, 0),
@@ -109,9 +122,7 @@ func main() {
 			}
 		}
 	}
-
-	output, _ := json.Marshal(result)
-	os.Stdout.Write(output)
+	return result
 }
 
 func CheckTopicRequesterAndApprovers(requester *PlanResource, approvers []*PlanResource, resource *PlanResource, plan *Plan, result *Result) {
