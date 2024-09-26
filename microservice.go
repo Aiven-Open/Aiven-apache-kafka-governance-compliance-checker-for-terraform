@@ -21,6 +21,7 @@ func InitMicroserviceServer() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.Secure())
 
 	e.POST("/check", func(c echo.Context) error {
 		fmt.Println("Got a request")
