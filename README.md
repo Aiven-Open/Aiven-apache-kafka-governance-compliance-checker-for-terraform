@@ -14,7 +14,6 @@ If we ever decide to make this repository public it could be published in
 the github marketplace for wider audience.
 
 # TODO
-- test e2e with the external_identity resource
 - the github action code
 
 # How to run

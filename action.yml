@@ -1,0 +1,26 @@
+name: 'aiven_terraform_governance_compliance_checker'
+description: 'A composite action that fetches required information about PR reviews and checks that terraform plan complies with aiven provider resources'
+author: 'Aiven'
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+  pull_request:
+    types: [opened, reopened, ready_for_review]  
+  pull_request_review_comment:
+runs:
+  using: "composite"
+  steps:
+      uses: actions/checkout@v4
+      uses: hashicorp/setup-terraform@v3
+      name: Run compliance checker
+      id: check
+      run: |
+        $REQUESTER = "alice"
+        $APPROVERS = "bob,charlie"
+        terraform init
+        terraform plan -out="./plan"
+        terraform show -json ./plan > ./plan.json
+        go run main.go -plan="./plan.json" -requester="$REQUESTER" -approvers="$APPROVERS" | jq >> "$GITHUB_OUTPUT"
+      shell: bash
+branding:
+  icon: 'shield'
+  color: 'orange'

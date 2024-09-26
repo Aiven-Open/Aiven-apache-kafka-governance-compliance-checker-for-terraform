@@ -8,105 +8,128 @@ import (
 	"strings"
 )
 
-type AivenResourceType string
-
-// resource type enum-like constant
-const (
-	KafkaTopic                       AivenResourceType = "aiven_kafka_topic"
-	AivenExternalIdentity            AivenResourceType = "aiven_external_identity"
-	AivenOrganizationUserGroupMember AivenResourceType = "aiven_organization_user_group_member"
-)
-
 type (
-	PlanResource struct {
-		Type   AivenResourceType `json:"type"`
-		Name   string            `json:"name"`
-		Values map[string]any    `json:"values"`
-	}
-
-	PlanResourceChange struct {
-		Type   AivenResourceType `json:"type"`
-		Name   string            `json:"name"`
-		Change struct {
-			Actions []string     `json:"actions"`
-			Before  PlanResource `json:"before"`
-			After   PlanResource `json:"after"`
-		} `json:"change"`
-	}
+	ResourceType 		string
 
 	Plan struct {
-		PlannedValues struct {
+		Changes []ResourceChange `json:"resource_changes"`
+		State	struct {
+			Values	struct {
+				RootModule struct {
+					Resources []Resource `json:"resources"`
+				} `json:"root_module"`
+			}	`json:"values"`
+		} `json:"prior_state"`
+		Configuration struct {
 			RootModule struct {
-				Resources []PlanResource `json:"resources"`
+				Resources []struct {
+					Type        ResourceType 	`json:"type"`
+					Name        string          `json:"name"`
+					Address     string          `json:"address"`
+					Expressions struct {
+						OwnerUserGroupId	struct {
+							References	[]string	`json:"references"`
+						} `json:"owner_user_group_id"`
+						InternalUserId	struct {
+							References	[]string	`json:"references"`
+						} `json:"internal_user_id"`
+						GroupId	struct {
+							References	[]string	`json:"references"`
+						} `json:"group_id"`
+						UserId	struct {
+							References	[]string	`json:"references"`
+						} `json:"user_id"`
+					} `json:"expressions"`
+				} `json:"resources"`
 			} `json:"root_module"`
-		} `json:"planned_values"`
-		ResourceChanges []PlanResourceChange `json:"resource_changes"`
+		} `json:"configuration"`
 	}
 
-	Message struct {
-		Title        string            `json:"title"`
-		Description  string            `json:"description"`
-		ResourceType AivenResourceType `json:"resource_type"`
-		ResourceName string            `json:"resource_name"`
+	Resource struct {
+		Type    ResourceType 	  `json:"type"`
+		Name    string            `json:"name"`
+		Address string            `json:"address"`
+		Values  struct {
+			InternalUserId		string	`json:"internal_user_id"`
+			ExternalUserId		string	`json:"external_user_id"`
+			OwnerUserGroupId	*string	`json:"owner_user_group_id"`
+			GroupId				*string `json:"group_id"`
+			UserId				*string	`json:"user_id"`
+		} `json:"values"`
+	}
+
+	ResourceChange struct {
+		Type   	ResourceType 	 `json:"type"`
+		Name   	string           `json:"name"`
+		Address	string			 `json:"address"`
+		Change 	Change 			 `json:"change"`
+	}
+
+	Change struct {
+		Actions 		[]string     	`json:"actions"`
+		Before  		Resource 		`json:"before"`
+		After   		Resource 		`json:"after"`
+		AfterUnknown	struct {
+			OwnerUserGroupId		bool	`json:"owner_user_group_id"`
+		} `json:"after_unknown"`
+	}
+
+	ResultError struct {
+		Error			string          `json:"error"`
+		Address			string			`json:"address"`
 	}
 
 	Result struct {
-		Ok       bool      `json:"ok"`
-		Messages []Message `json:"messages"`
+		Ok       bool      	 `json:"ok"`
+		Errors []ResultError `json:"errors"`
 	}
 )
 
+const (
+	AivenKafkaTopic                  ResourceType = "aiven_kafka_topic"
+	AivenExternalIdentity            ResourceType = "aiven_external_identity"
+	AivenOrganizationUserGroupMember ResourceType = "aiven_organization_user_group_member"
+)
+
 func main() {
-	pathToPlan := flag.String("plan", "", "path to a file with terraform plan output in json format")
+	path := flag.String("plan", "", "path to a file with terraform plan output in json format")
 	requesterId := flag.String("requester", "", "user identified as the requester of the change")
 	approverIds := flag.String("approvers", "", "comma separated list of users identified as the approvers of the change")
 	flag.Parse()
 
-	if *pathToPlan == "" || *requesterId == "" || *approverIds == "" {
-		os.Stderr.WriteString("missing required arguments")
+	if *path == "" || *requesterId == "" || *approverIds == "" {
+		os.Stderr.WriteString("Missing required arguments\n")
 		os.Exit(1)
 	}
 
-	planContent, err := os.ReadFile(*pathToPlan)
+	content, err := os.ReadFile(*path)
 	if err != nil {
-		os.Stderr.WriteString(err.Error())
+		os.Stderr.WriteString(err.Error() + "\n")
 		os.Exit(1)
 	}
 
 	var plan Plan
-	err = json.Unmarshal(planContent, &plan)
+	err = json.Unmarshal(content, &plan)
 	if err != nil {
-		os.Stderr.WriteString(err.Error())
+		os.Stderr.WriteString(err.Error() + "\n")
 		os.Exit(1)
 	}
 
 	result := Result{
 		Ok:       true,
-		Messages: make([]Message, 0),
+		Errors:   make([]ResultError, 0),
 	}
 
-	var requester = GetExternalIdentity(*requesterId, &plan)
-	var approvers []*PlanResource
+	requester := GetExternalIdentity(*requesterId, &plan)
+	var approvers []*Resource
 	for _, approverId := range strings.Split(*approverIds, ",") {
-		approver := GetExternalIdentity(approverId, &plan)
-		if approver != nil {
-			approvers = append(approvers, approver)
-		}
+		approvers = append(approvers, GetExternalIdentity(approverId, &plan))
 	}
 
-	for _, resource := range plan.ResourceChanges {
-		switch resource.Type {
-		case KafkaTopic:
-			if slices.Contains(resource.Change.Actions, "create") {
-				CheckTopicRequesterAndApprovers(requester, approvers, &resource.Change.After, &plan, &result)
-			}
-			if slices.Contains(resource.Change.Actions, "update") {
-				CheckTopicRequesterAndApprovers(requester, approvers, &resource.Change.Before, &plan, &result)
-				CheckTopicRequesterAndApprovers(requester, approvers, &resource.Change.After, &plan, &result)
-			}
-			if slices.Contains(resource.Change.Actions, "delete") {
-				CheckTopicRequesterAndApprovers(requester, approvers, &resource.Change.Before, &plan, &result)
-			}
+	for _, resourceChange := range plan.Changes {
+		switch resourceChange.Type {
+		case AivenKafkaTopic:
+			CheckAivenKafkaTopicResource(resourceChange, requester, &plan, &result)
 		}
 	}
 
@@ -114,65 +137,120 @@ func main() {
 	os.Stdout.Write(output)
 }
 
-func CheckTopicRequesterAndApprovers(requester *PlanResource, approvers []*PlanResource, resource *PlanResource, plan *Plan, result *Result) {
-	requesterId, _ := requester.Values["internal_user_id"].(string)
-	ownerGroupId, exists := resource.Values["owner_user_group_id"].(string)
-	if !exists {
+func CheckAivenKafkaTopicResource(resourceChange ResourceChange, requester *Resource, plan *Plan, result *Result) {
+	if resourceChange.Change.AfterUnknown.OwnerUserGroupId {
+		CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange, requester, plan, result)
+	}
+	if slices.Contains(resourceChange.Change.Actions, "create") {
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, plan, result)
+	}
+	if slices.Contains(resourceChange.Change.Actions, "update") {
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, plan, result)
+	}
+	if slices.Contains(resourceChange.Change.Actions, "delete") {
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, plan, result)
+	}
+}
+
+func CheckAivenKafkaTopicOwnerMembershipFromState(topic Resource, requester *Resource, plan *Plan, result *Result) {
+	if topic.Values.OwnerUserGroupId == nil {
+		return
+	}
+	if requester == nil {
+		result.Ok = false
+		result.Errors = append(result.Errors, GetRequestError(topic.Address))
 		return
 	}
 
-	membership := GetUserGroupMembership(requesterId, ownerGroupId, plan)
-	if membership == nil {
+	if !CheckUserGroupMembership(*topic.Values.OwnerUserGroupId, requester.Values.InternalUserId, plan) {
 		result.Ok = false
-		result.Messages = append(result.Messages, Message{
-			Title:        "MembershipRequired",
-			Description:  "requester is not a member of the owner user group",
-			ResourceType: resource.Type,
-			ResourceName: resource.Name,
-		})
+		result.Errors = append(result.Errors, GetRequestError(topic.Address))
 	}
 
-	var approved bool
-	for _, approver := range approvers {
-		approverId, _ := approver.Values["internal_user_id"].(string)
-		membership := GetUserGroupMembership(approverId, ownerGroupId, plan)
-		if membership != nil {
-			approved = true
+	for _, approver := range plan.State.Values.RootModule.Resources {
+		if CheckUserGroupMembership(*topic.Values.OwnerUserGroupId, approver.Values.InternalUserId, plan) {
+			return
 		}
 	}
-
-	if !approved {
-		result.Ok = false
-		result.Messages = append(result.Messages, Message{
-			Title:        "ApprovalRequired",
-			Description:  "approval is required from the owner user group",
-			ResourceType: resource.Type,
-			ResourceName: resource.Name,
-		})
-	}
+	result.Ok = false
+	result.Errors = append(result.Errors, GetApproveError(topic.Address))
 }
 
-func GetExternalIdentity(userId string, plan *Plan) *PlanResource {
-	for _, resource := range plan.PlannedValues.RootModule.Resources {
-		if resource.Type == AivenExternalIdentity {
-			extUserId, _ := resource.Values["external_user_id"].(string)
-			if userId == extUserId {
-				return &resource
-			}
+func CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange ResourceChange, requester *Resource, plan *Plan, result *Result) {
+	var ownerAddress *string
+	for _, resource := range plan.Configuration.RootModule.Resources {
+		if resource.Address == resourceChange.Address {
+			ownerAddress = &resource.Expressions.OwnerUserGroupId.References[1]
+			break
 		}
 	}
-	return nil
-}
+	if ownerAddress == nil {
+		return
+	}
 
-func GetUserGroupMembership(userId string, groupId string, plan *Plan) *PlanResource {
-	for _, resource := range plan.PlannedValues.RootModule.Resources {
+	if requester == nil {
+		result.Ok = false
+		result.Errors = append(result.Errors, GetRequestError(resourceChange.Address))
+		return
+	}
+
+	var userAddress *string
+	for _, resource := range plan.Configuration.RootModule.Resources {
+		if resource.Address == requester.Address {
+			userAddress = &resource.Expressions.InternalUserId.References[1]
+			break
+		}
+	}
+	if userAddress == nil {
+		return
+	}
+
+	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Type == AivenOrganizationUserGroupMember {
-			memberUserId, _ := resource.Values["user_id"].(string)
-			memberGroupId, _ := resource.Values["group_id"].(string)
-			if userId == memberUserId && memberGroupId == groupId {
+			groupReference := resource.Expressions.GroupId.References[1]
+			userReference := resource.Expressions.UserId.References[1]
+			if groupReference == *ownerAddress && userReference == *userAddress {	
+				return
+			}
+		}
+	}
+	result.Ok = false
+	result.Errors = append(result.Errors, GetRequestError(resourceChange.Address))
+}
+
+func CheckUserGroupMembership(groupId string, userId string, plan *Plan) bool {
+	for _, resource := range plan.State.Values.RootModule.Resources {
+		if resource.Type == AivenOrganizationUserGroupMember {
+			if *resource.Values.GroupId == groupId && *resource.Values.UserId == userId {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func GetExternalIdentity(userId string, plan *Plan) *Resource {
+	for _, resource := range plan.State.Values.RootModule.Resources {
+		if resource.Type == AivenExternalIdentity {
+			if userId == resource.Values.ExternalUserId {
 				return &resource
 			}
 		}
 	}
 	return nil
+}
+
+func GetRequestError(resourceAddress string) ResultError {
+	return ResultError{
+		Error:  "requesting user is not a member of the owner group",
+		Address:  resourceAddress,
+	}
+}
+
+func GetApproveError(resourceAddress string) ResultError {
+	return ResultError{
+		Error: "approval is required from a member of the owner group",
+		Address: resourceAddress,
+	}
 }
