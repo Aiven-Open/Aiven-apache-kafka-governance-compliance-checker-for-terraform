@@ -1,0 +1,23 @@
+name: 'aiven_terraform_governance_compliance_checker'
+
+on:
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+  pull_request_review_comment:
+
+permissions:
+  contents: read
+
+jobs:
+  aiven_terraform_governance_compliance_checker:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+    #  - run: terraform init
+    #  - run: terraform plan -out="plan"
+    #  - run: terraform show -json plan > plan.json
+      - run: export APPROVERS=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews
+      - run: go run main.go -plan="./data/plan.json" -requester="${{ github.event.pull_request.user.login }}" -approvers="$APPROVERS" | jq '[.[] | select(.state == "APPROVED") | .user.login] | unique')" | jq
