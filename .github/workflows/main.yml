@@ -1,23 +1,45 @@
 name: 'aiven_terraform_governance_compliance_checker'
 
 on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
   pull_request_review:
     types: [submitted, dismissed, edited]
-  pull_request_review_comment:
-
-permissions:
-  contents: read
 
 jobs:
   aiven_terraform_governance_compliance_checker:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - uses: octokit/request-action@v2.x
+        id: approvers
+        with:
+          route: GET /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/checkout@v4
+        id: checkout-branch
+
       - uses: hashicorp/setup-terraform@v3
+        id: check-governance-compliance
     #  - run: terraform init
-    #  - run: terraform plan -out="plan"
+    #  - run: terraform plan -out="plan" -var="aiven_api_token=${{ secrets.AIVEN_API_TOKEN }}"
     #  - run: terraform show -json plan > plan.json
-      - run: export APPROVERS=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews
-      - run: go run main.go -plan="./data/plan.json" -requester="${{ github.event.pull_request.user.login }}" -approvers="$APPROVERS" | jq '[.[] | select(.state == "APPROVED") | .user.login] | unique')" | jq
+      - run: | 
+          REQUESTER=${{ github.event.pull_request.user.login }}
+          APPROVERS=$(echo '${{ steps.approvers.outputs.data }}' | jq '[.[] | select(.state == "APPROVED") | .user.login] | unique')
+          REPORT=$(go run main.go -plan="./data/plan.json" -requester="$REQUESTER" -approvers="$APPROVERS")
+
+          if [ $(echo $REPORT | jq '.ok') == "true" ]
+          then
+              echo "OK"
+          else
+              echo $REPORT | jq
+              exit 1
+          fi
