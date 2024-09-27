@@ -27,18 +27,14 @@ go run main.go -plan="./plan.json" -requester="alice" -approvers="bob,charlie"
 ```json
 {
   "ok": false,
-  "messages": [
+  "errors": [
     {
-      "title": "MembershipRequired",
-      "description": "requester is not a member of the owner user group",
-      "resource_type": "aiven_kafka_topic",
-      "resource_name": "topic-1"
+      "error": "requesting user is not a member of the owner group",
+      "address": "aiven_kafka_topic.foo"
     },
     {
-      "title": "ApprovalRequired",
-      "description": "approval is required from the owner user group",
-      "resource_type": "aiven_kafka_topic",
-      "resource_name": "topic-1"
+      "error": "approval required from a member of the owner group",
+      "address": "aiven_kafka_topic.foo"
     }
   ] 
 }
