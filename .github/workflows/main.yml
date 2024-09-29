@@ -34,7 +34,7 @@ jobs:
       - run: | 
           REQUESTER=${{ github.event.pull_request.user.login }}
           APPROVERS=$(echo '${{ steps.approvers.outputs.data }}' | jq '[.[] | select(.state == "APPROVED") | .user.login] | unique')
-          REPORT=$(go run main.go -plan="./data/plan.json" -requester="$REQUESTER" -approvers="$APPROVERS")
+          REPORT=$(go run main.go -plan="./testdata/plan.json" -requester="$REQUESTER" -approvers="$APPROVERS")
 
           if [ $(echo $REPORT | jq '.ok') == "true" ]
           then

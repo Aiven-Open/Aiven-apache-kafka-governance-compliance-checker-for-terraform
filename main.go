@@ -129,7 +129,7 @@ func main() {
 	for _, resourceChange := range plan.Changes {
 		switch resourceChange.Type {
 		case AivenKafkaTopic:
-			CheckAivenKafkaTopicResource(resourceChange, requester, &plan, &result)
+			CheckAivenKafkaTopicResource(resourceChange, requester, approvers, &plan, &result)
 		}
 	}
 
@@ -137,23 +137,23 @@ func main() {
 	os.Stdout.Write(output)
 }
 
-func CheckAivenKafkaTopicResource(resourceChange ResourceChange, requester *Resource, plan *Plan, result *Result) {
+func CheckAivenKafkaTopicResource(resourceChange ResourceChange, requester *Resource, approvers []*Resource, plan *Plan, result *Result) {
 	if resourceChange.Change.AfterUnknown.OwnerUserGroupId {
-		CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange, requester, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange, requester, approvers, plan, result)
 	}
 	if slices.Contains(resourceChange.Change.Actions, "create") {
-		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, approvers, plan, result)
 	}
 	if slices.Contains(resourceChange.Change.Actions, "update") {
-		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, plan, result)
-		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, approvers, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.After, requester, approvers, plan, result)
 	}
 	if slices.Contains(resourceChange.Change.Actions, "delete") {
-		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, plan, result)
+		CheckAivenKafkaTopicOwnerMembershipFromState(resourceChange.Change.Before, requester, approvers, plan, result)
 	}
 }
 
-func CheckAivenKafkaTopicOwnerMembershipFromState(topic Resource, requester *Resource, plan *Plan, result *Result) {
+func CheckAivenKafkaTopicOwnerMembershipFromState(topic Resource, requester *Resource, approvers []*Resource, plan *Plan, result *Result) {
 	if topic.Values.OwnerUserGroupId == nil {
 		return
 	}
@@ -163,13 +163,13 @@ func CheckAivenKafkaTopicOwnerMembershipFromState(topic Resource, requester *Res
 		return
 	}
 
-	if !CheckUserGroupMembership(*topic.Values.OwnerUserGroupId, requester.Values.InternalUserId, plan) {
+	if !CheckUserGroupMembershipFromState(*topic.Values.OwnerUserGroupId, requester.Values.InternalUserId, plan) {
 		result.Ok = false
 		result.Errors = append(result.Errors, GetRequestError(topic.Address))
 	}
 
-	for _, approver := range plan.State.Values.RootModule.Resources {
-		if CheckUserGroupMembership(*topic.Values.OwnerUserGroupId, approver.Values.InternalUserId, plan) {
+	for _, approver := range approvers {
+		if CheckUserGroupMembershipFromState(*topic.Values.OwnerUserGroupId, approver.Values.InternalUserId, plan) {
 			return
 		}
 	}
@@ -177,7 +177,32 @@ func CheckAivenKafkaTopicOwnerMembershipFromState(topic Resource, requester *Res
 	result.Errors = append(result.Errors, GetApproveError(topic.Address))
 }
 
-func CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange ResourceChange, requester *Resource, plan *Plan, result *Result) {
+func CheckUserGroupMembershipFromState(groupId string, userId string, plan *Plan) bool {
+	for _, resource := range plan.State.Values.RootModule.Resources {
+		if resource.Type == AivenOrganizationUserGroupMember {
+			if *resource.Values.GroupId == groupId && *resource.Values.UserId == userId {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange ResourceChange, requester *Resource, approvers []*Resource, plan *Plan, result *Result) {
+	if !CheckUserGroupMembershipFromConfiguration(resourceChange, requester, plan) {
+		result.Ok = false
+		result.Errors = append(result.Errors, GetRequestError(resourceChange.Address))	
+	}
+	for _, approver := range approvers {
+		if CheckUserGroupMembershipFromConfiguration(resourceChange, approver, plan) {
+			return
+		}
+	}
+	result.Ok = false
+	result.Errors = append(result.Errors, GetApproveError(resourceChange.Address))
+}
+
+func CheckUserGroupMembershipFromConfiguration(resourceChange ResourceChange, user *Resource, plan *Plan) bool {
 	var ownerAddress *string
 	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Address == resourceChange.Address {
@@ -185,25 +210,19 @@ func CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange Resourc
 			break
 		}
 	}
-	if ownerAddress == nil {
-		return
-	}
-
-	if requester == nil {
-		result.Ok = false
-		result.Errors = append(result.Errors, GetRequestError(resourceChange.Address))
-		return
+	if user == nil || ownerAddress == nil {
+		return false
 	}
 
 	var userAddress *string
 	for _, resource := range plan.Configuration.RootModule.Resources {
-		if resource.Address == requester.Address {
+		if resource.Address == user.Address {
 			userAddress = &resource.Expressions.InternalUserId.References[1]
 			break
 		}
 	}
 	if userAddress == nil {
-		return
+		return false
 	}
 
 	for _, resource := range plan.Configuration.RootModule.Resources {
@@ -211,18 +230,6 @@ func CheckAivenKafkaTopicOwnerMembershipFromConfiguration(resourceChange Resourc
 			groupReference := resource.Expressions.GroupId.References[1]
 			userReference := resource.Expressions.UserId.References[1]
 			if groupReference == *ownerAddress && userReference == *userAddress {	
-				return
-			}
-		}
-	}
-	result.Ok = false
-	result.Errors = append(result.Errors, GetRequestError(resourceChange.Address))
-}
-
-func CheckUserGroupMembership(groupId string, userId string, plan *Plan) bool {
-	for _, resource := range plan.State.Values.RootModule.Resources {
-		if resource.Type == AivenOrganizationUserGroupMember {
-			if *resource.Values.GroupId == groupId && *resource.Values.UserId == userId {
 				return true
 			}
 		}

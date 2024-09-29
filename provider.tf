@@ -35,7 +35,7 @@ resource "aiven_organization_user_group_member" "foo" {
 }
 
 data "aiven_project" "foo" {
-  project = "testproject-r63c"
+  project = "testproject-hpo9"
 }
 
 resource "aiven_kafka" "foo" {
