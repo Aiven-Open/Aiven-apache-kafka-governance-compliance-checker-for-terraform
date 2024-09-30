@@ -21,7 +21,7 @@
             "maintenance_window_dow": "monday",
             "maintenance_window_time": "10:00:00",
             "plan": "startup-2",
-            "project": "testproject-r63c",
+            "project": "testproject-hpo9",
             "project_vpc_id": null,
             "service_integrations": [],
             "service_name": "kafka1",
@@ -51,7 +51,7 @@
           "values": {
             "config": [],
             "partitions": 3,
-            "project": "testproject-r63c",
+            "project": "testproject-hpo9",
             "replication": 2,
             "service_name": "kafka1",
             "tag": [],
@@ -66,6 +66,21 @@
           }
         },
         {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "description": "Example group of users.",
+            "name": "bar",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null
+          },
+          "sensitive_values": {}
+        },
+        {
           "address": "aiven_organization_user_group.foo",
           "mode": "managed",
           "type": "aiven_organization_user_group",
@@ -75,22 +90,36 @@
           "values": {
             "description": "Example group of users.",
             "name": "foo",
-            "organization_id": "org4e10dd5e162",
+            "organization_id": "org4e3706c823b",
             "timeouts": null
           },
           "sensitive_values": {}
         },
         {
-          "address": "aiven_organization_user_group_member.foo",
+          "address": "aiven_organization_user_group_member.alice",
           "mode": "managed",
           "type": "aiven_organization_user_group_member",
-          "name": "foo",
+          "name": "alice",
           "provider_name": "registry.terraform.io/aiven/aiven",
           "schema_version": 0,
           "values": {
-            "organization_id": "org4e10dd5e162",
+            "organization_id": "org4e3706c823b",
             "timeouts": null,
-            "user_id": "u4e10dde27b5"
+            "user_id": "u4e3706199a0"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "user_id": "u4e3b0f02414"
           },
           "sensitive_values": {}
         }
@@ -119,7 +148,7 @@
           "maintenance_window_dow": "monday",
           "maintenance_window_time": "10:00:00",
           "plan": "startup-2",
-          "project": "testproject-r63c",
+          "project": "testproject-hpo9",
           "project_vpc_id": null,
           "service_integrations": [],
           "service_name": "kafka1",
@@ -176,7 +205,7 @@
         "after": {
           "config": [],
           "partitions": 3,
-          "project": "testproject-r63c",
+          "project": "testproject-hpo9",
           "replication": 2,
           "service_name": "kafka1",
           "tag": [],
@@ -199,10 +228,10 @@
       }
     },
     {
-      "address": "aiven_organization_user_group.foo",
+      "address": "aiven_organization_user_group.bar",
       "mode": "managed",
       "type": "aiven_organization_user_group",
-      "name": "foo",
+      "name": "bar",
       "provider_name": "registry.terraform.io/aiven/aiven",
       "change": {
         "actions": [
@@ -211,8 +240,8 @@
         "before": null,
         "after": {
           "description": "Example group of users.",
-          "name": "foo",
-          "organization_id": "org4e10dd5e162",
+          "name": "bar",
+          "organization_id": "org4e3706c823b",
           "timeouts": null
         },
         "after_unknown": {
@@ -226,9 +255,9 @@
       }
     },
     {
-      "address": "aiven_organization_user_group_member.foo",
+      "address": "aiven_organization_user_group.foo",
       "mode": "managed",
-      "type": "aiven_organization_user_group_member",
+      "type": "aiven_organization_user_group",
       "name": "foo",
       "provider_name": "registry.terraform.io/aiven/aiven",
       "change": {
@@ -237,9 +266,61 @@
         ],
         "before": null,
         "after": {
-          "organization_id": "org4e10dd5e162",
+          "description": "Example group of users.",
+          "name": "foo",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null
+        },
+        "after_unknown": {
+          "create_time": true,
+          "group_id": true,
+          "id": true,
+          "update_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.alice",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "alice",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "organization_id": "org4e3706c823b",
           "timeouts": null,
-          "user_id": "u4e10dde27b5"
+          "user_id": "u4e3706199a0"
+        },
+        "after_unknown": {
+          "group_id": true,
+          "id": true,
+          "last_activity_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.bob",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "bob",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3b0f02414"
         },
         "after_unknown": {
           "group_id": true,
@@ -267,8 +348,23 @@
             "values": {
               "external_service_name": "github",
               "external_user_id": "alice",
-              "internal_user_id": "u4e10dde27b5",
-              "organization_id": "org4e10dd5e162"
+              "internal_user_id": "u4e3706199a0",
+              "organization_id": "org4e3706c823b"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_external_identity.bob",
+            "mode": "data",
+            "type": "aiven_external_identity",
+            "name": "bob",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "external_service_name": "github",
+              "external_user_id": "bob",
+              "internal_user_id": "u4e3b0f02414",
+              "organization_id": "org4e3706c823b"
             },
             "sensitive_values": {}
           },
@@ -280,11 +376,27 @@
             "provider_name": "registry.terraform.io/aiven/aiven",
             "schema_version": 0,
             "values": {
-              "create_time": "2024-09-22 20:44:51 +0000 UTC",
-              "id": "org4e10dd5e162",
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b",
               "name": "My Organization",
               "tenant_id": "aiven",
-              "update_time": "2024-09-24 06:05:16 +0000 UTC"
+              "update_time": "2024-09-29 19:56:17 +0000 UTC"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization_user.bar",
+            "mode": "data",
+            "type": "aiven_organization_user",
+            "name": "bar",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-30 08:51:19 +0000 UTC",
+              "id": "org4e3706c823b/alice2@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice2@aiven.fi",
+              "user_id": "u4e3b0f02414"
             },
             "sensitive_values": {}
           },
@@ -296,11 +408,11 @@
             "provider_name": "registry.terraform.io/aiven/aiven",
             "schema_version": 0,
             "values": {
-              "create_time": "2024-09-22 20:44:51 +0000 UTC",
-              "id": "org4e10dd5e162/roope-kar@aiven.fi",
-              "organization_id": "org4e10dd5e162",
-              "user_email": "roope-kar@aiven.fi",
-              "user_id": "u4e10dde27b5"
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b/alice@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice@aiven.fi",
+              "user_id": "u4e3706199a0"
             },
             "sensitive_values": {}
           },
@@ -312,18 +424,18 @@
             "provider_name": "registry.terraform.io/aiven/aiven",
             "schema_version": 0,
             "values": {
-              "account_id": "a4e10ddb8dfc",
+              "account_id": "a4e3706c4c40",
               "add_account_owners_admin_access": null,
               "available_credits": "0.00",
-              "billing_group": "4f535432-1686-4495-8319-8d74a95b63dc",
-              "ca_cert": "-----BEGIN CERTIFICATE-----\nMIIEQTCCAqmgAwIBAgIUOjJmBQKb5c9SYy2zUR4xqR2ybSowDQYJKoZIhvcNAQEM\nBQAwOjE4MDYGA1UEAwwvNGEwNDAwMTktOTIxZS00OWNkLWEwZGUtNTFmNDZiYTQz\nMDAwIFByb2plY3QgQ0EwHhcNMjQwOTIyMjA0NDU1WhcNMzQwOTIwMjA0NDU1WjA6\nMTgwNgYDVQQDDC80YTA0MDAxOS05MjFlLTQ5Y2QtYTBkZS01MWY0NmJhNDMwMDAg\nUHJvamVjdCBDQTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAKkOogM8\ng9w/yZYMZ1ho2NCWYG6h1kEei6c4v0S6Vj3f5+50LuOwsDJhnYqlWn0B74DWU0LU\n3JMCfSDLMZEBENc8x6ZiXjXK/6GtJjDhjS5mrcV0w48zVR9Q0jwf5g/crxk12yDa\nJejlBS3UeaMO5DR9w2lqr973gn49HMO9L6bwczLdTIHVkC/6yfuHYuhB9r4ZTgL/\nAH9WmwDq2mxGnC450wmZ6rL9h+t2cKwwlkcLQzdfMotqwM9j6dCQxJiwWTuPovE7\ny/y38ZX6TMZXt4LuZxoFJmudEM3DeAWG37GgZry/pLvH3yFkHUG/kH/2iCK6bvUP\nePTU0/6lyk4gN7odgbR3Iib0sils+8l4sLUS7BvFEvQEBdqg7DH0oUZ9FwpdRwsX\nnzxvmxNDoUVtq1OaCyBpPEoXSjTcGJohKGnUEY6vIdsIPoXf20sZ5gHTXPTCEk4R\npuZAjVmNKHcvjZdLZMk2DcFYgcOLsDGy7ZZSBIEV1A+99aVVW+jn7O1d+wIDAQAB\noz8wPTAdBgNVHQ4EFgQUzNYhSjzsa1wmZUjL/J/jroNiTIowDwYDVR0TBAgwBgEB\n/wIBADALBgNVHQ8EBAMCAQYwDQYJKoZIhvcNAQEMBQADggGBAIrt3OY/PjgxBE+0\nxZ+9M9BaJY4CWyfVzCj1sjpQhjXx5httxGBYzd/ZYu1zSHCD/OTZCzao+Xdhda6p\n072oBJ/6eQXM5oG4C3NvUG72PrKCW4Rz+Ic2j5P+2HC40PNjv8bW9TbzM4ycrySl\nxzrdOmkpvjBqeINKe0Tiv0jeLWtMVkiuJfWLlbcZ15Es/CKHzPjjEgdUTT9LFFen\njlEuHlXf0qeX1jtve5G/sZOe+IxYcGcs7xMPLKIiGYjVkyqhTmO4e8ISoqDdiYTg\n15WFGi0DZq6VotITdPRDNPpNiOH5GQBRdsTSzmUngvv5cCNfVyskd38lexpTr2F9\n/pAmKTPe9rGlL/kI18KWE6T0e8pHCyIC1waCmgGTNtAr5bary31Rk39VIRF71BPo\nXFd5jVCPW2gHYeMrwtQbM3Q7+kJ6agy42Y0qUd8Bgjv/57iFY4qtYQhf5soboIdI\nMv4/d1ZAf7tOLTSO7kllPjRxjU+S0XalZGbfvtu40G17yUgACw==\n-----END CERTIFICATE-----\n",
+              "billing_group": "c36747f3-f78b-496c-b430-56c78e996fd9",
+              "ca_cert": "---",
               "copy_from_project": null,
               "default_cloud": "google-europe-west1",
               "estimated_balance": "0.00",
-              "id": "testproject-r63c",
+              "id": "testproject-hpo9",
               "parent_id": null,
               "payment_method": "card",
-              "project": "testproject-r63c",
+              "project": "testproject-hpo9",
               "tag": [],
               "technical_emails": [],
               "use_source_project_billing_group": null
@@ -346,7 +458,7 @@
         "version_constraint": ">= 4.0.0, < 5.0.0",
         "expressions": {
           "api_token": {
-            "constant_value": "JxG20DsqcVZ3Nrjct45wjqumIoGbWdpVUbafvbLgfWLesxLUO+3V5iswdWsluSIa+8j07XJVdUrHoJZ1L+MZEjw0m3K8NWdlldXbzE5l3b97/ApwwGXDMEBOIUo+qOQm71dpiwqJnlEkCXYLGfN0uhYwFmCJAJ6f8Yuh8Bs+4XfaSRJKfuFq43jjeuVU36POsmtJARmOyCXNfbnYLh2WXgSEqnHCwjsI9lVMBNrJSsfNRsA3njYPhE9IMkLBDCZ6KEdPwnOed/dSmVRyg7y3wNorjUS03X9sUlQl+5ul4XzeXPg2dZDTAinTog3QtljivVX2P01gn98ykJnZPG7Si3MdNTS5O1hbZNxxe18d0rZV"
+            "constant_value": "---"
           }
         }
       }
@@ -422,6 +534,28 @@
           "schema_version": 1
         },
         {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "description": {
+              "constant_value": "Example group of users."
+            },
+            "name": {
+              "constant_value": "bar"
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
           "address": "aiven_organization_user_group.foo",
           "mode": "managed",
           "type": "aiven_organization_user_group",
@@ -444,10 +578,10 @@
           "schema_version": 0
         },
         {
-          "address": "aiven_organization_user_group_member.foo",
+          "address": "aiven_organization_user_group_member.alice",
           "mode": "managed",
           "type": "aiven_organization_user_group_member",
-          "name": "foo",
+          "name": "alice",
           "provider_config_key": "aiven",
           "expressions": {
             "group_id": {
@@ -466,6 +600,34 @@
               "references": [
                 "data.aiven_organization_user.foo.user_id",
                 "data.aiven_organization_user.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
               ]
             }
           },
@@ -500,6 +662,34 @@
           "schema_version": 0
         },
         {
+          "address": "data.aiven_external_identity.bob",
+          "mode": "data",
+          "type": "aiven_external_identity",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "external_service_name": {
+              "constant_value": "github"
+            },
+            "external_user_id": {
+              "constant_value": "bob"
+            },
+            "internal_user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
           "address": "data.aiven_organization.foo",
           "mode": "data",
           "type": "aiven_organization",
@@ -508,6 +698,25 @@
           "expressions": {
             "name": {
               "constant_value": "My Organization"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization_user.bar",
+          "mode": "data",
+          "type": "aiven_organization_user",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_email": {
+              "constant_value": "alice2@aiven.fi"
             }
           },
           "schema_version": 0
@@ -526,7 +735,7 @@
               ]
             },
             "user_email": {
-              "constant_value": "roope-kar@aiven.fi"
+              "constant_value": "alice@aiven.fi"
             }
           },
           "schema_version": 0
@@ -539,7 +748,7 @@
           "provider_config_key": "aiven",
           "expressions": {
             "project": {
-              "constant_value": "testproject-r63c"
+              "constant_value": "testproject-hpo9"
             }
           },
           "schema_version": 0
@@ -549,9 +758,21 @@
   },
   "relevant_attributes": [
     {
+      "resource": "data.aiven_organization.foo",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
       "resource": "aiven_organization_user_group.foo",
       "attribute": [
         "group_id"
+      ]
+    },
+    {
+      "resource": "data.aiven_organization_user.bar",
+      "attribute": [
+        "user_id"
       ]
     },
     {
@@ -571,13 +792,7 @@
       "attribute": [
         "service_name"
       ]
-    },
-    {
-      "resource": "data.aiven_organization.foo",
-      "attribute": [
-        "id"
-      ]
     }
   ],
-  "timestamp": "2024-09-25T10:02:26Z"
+  "timestamp": "2024-09-30T08:56:33Z"
 }

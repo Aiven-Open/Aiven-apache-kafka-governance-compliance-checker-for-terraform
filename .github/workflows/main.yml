@@ -28,18 +28,18 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         id: check-governance-compliance
-    #  - run: terraform init
-    #  - run: terraform plan -out="plan" -var="aiven_api_token=${{ secrets.AIVEN_API_TOKEN }}"
-    #  - run: terraform show -json plan > plan.json
+      - run: terraform init
+      - run: terraform plan -out=plan -var="aiven_api_token=${{ secrets.AIVEN_API_TOKEN }}"
+      - run: terraform show -json plan > ./plan.json
       - run: | 
           REQUESTER=${{ github.event.pull_request.user.login }}
           APPROVERS=$(echo '${{ steps.approvers.outputs.data }}' | jq '[.[] | select(.state == "APPROVED") | .user.login] | unique')
-          REPORT=$(go run main.go -plan="./testdata/plan.json" -requester="$REQUESTER" -approvers="$APPROVERS")
+          RESULT=$(./build/checker -plan=plan.json -requester=$REQUESTER -approvers=$APPROVERS)
 
-          if [ $(echo $REPORT | jq '.ok') == "true" ]
+          if [ $(echo $RESULT | jq '.ok') == "true" ]
           then
               echo "OK"
           else
-              echo $REPORT | jq
+              echo $RESULT | jq
               exit 1
           fi

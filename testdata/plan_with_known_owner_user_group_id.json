@@ -1,0 +1,2595 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.5.7",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aiven_kafka.foo",
+          "mode": "managed",
+          "type": "aiven_kafka",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "additional_disk_space": null,
+            "cloud_name": "google-europe-west1",
+            "components": [
+              {
+                "component": "kafka",
+                "connection_uri": "---",
+                "host": "---",
+                "kafka_authentication_method": "certificate",
+                "port": 24686,
+                "route": "dynamic",
+                "ssl": true,
+                "usage": "primary"
+              }
+            ],
+            "default_acl": true,
+            "disk_space": null,
+            "disk_space_cap": "0B",
+            "disk_space_default": "90GiB",
+            "disk_space_step": "0B",
+            "disk_space_used": "90GiB",
+            "id": "testproject-hpo9/kafka1",
+            "kafka": [
+              {
+                "access_cert": "---",
+                "access_key": "---",
+                "connect_uri": "",
+                "rest_uri": "---",
+                "schema_registry_uri": "---",
+                "uris": [
+                  "---",
+                  "---",
+                  "---"
+                ]
+              }
+            ],
+            "kafka_user_config": [
+              {
+                "additional_backup_regions": [],
+                "aiven_kafka_topic_messages": false,
+                "custom_domain": "",
+                "follower_fetching": [],
+                "ip_filter": [
+                  "0.0.0.0/0"
+                ],
+                "ip_filter_object": [],
+                "ip_filter_string": [],
+                "kafka": [],
+                "kafka_authentication_methods": [
+                  {
+                    "certificate": true,
+                    "sasl": false
+                  }
+                ],
+                "kafka_connect": false,
+                "kafka_connect_config": [],
+                "kafka_connect_secret_providers": [],
+                "kafka_rest": false,
+                "kafka_rest_authorization": false,
+                "kafka_rest_config": [],
+                "kafka_sasl_mechanisms": [],
+                "kafka_version": "3.7",
+                "letsencrypt_sasl_privatelink": false,
+                "private_access": [],
+                "privatelink_access": [],
+                "public_access": [],
+                "schema_registry": false,
+                "schema_registry_config": [],
+                "service_log": false,
+                "static_ips": false,
+                "tiered_storage": []
+              }
+            ],
+            "karapace": null,
+            "maintenance_window_dow": "monday",
+            "maintenance_window_time": "10:00:00",
+            "plan": "startup-2",
+            "project": "testproject-hpo9",
+            "project_vpc_id": null,
+            "service_host": "---",
+            "service_integrations": [],
+            "service_name": "kafka1",
+            "service_password": "---",
+            "service_port": 24686,
+            "service_type": "kafka",
+            "service_uri": "---",
+            "service_username": "avnadmin",
+            "state": "RUNNING",
+            "static_ips": [],
+            "tag": [],
+            "tech_emails": [],
+            "termination_protection": false,
+            "timeouts": null
+          },
+          "sensitive_values": {
+            "components": [
+              {}
+            ],
+            "kafka": [
+              {
+                "uris": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ],
+            "kafka_user_config": [
+              {
+                "additional_backup_regions": [],
+                "follower_fetching": [],
+                "ip_filter": [
+                  false
+                ],
+                "ip_filter_object": [],
+                "ip_filter_string": [],
+                "kafka": [],
+                "kafka_authentication_methods": [
+                  {}
+                ],
+                "kafka_connect_config": [],
+                "kafka_connect_secret_providers": [],
+                "kafka_rest_config": [],
+                "kafka_sasl_mechanisms": [],
+                "private_access": [],
+                "privatelink_access": [],
+                "public_access": [],
+                "schema_registry_config": [],
+                "tiered_storage": []
+              }
+            ],
+            "service_integrations": [],
+            "static_ips": [],
+            "tag": [],
+            "tech_emails": []
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.bar[0]",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "bar",
+          "index": 0,
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "config": [
+              {
+                "cleanup_policy": "delete",
+                "compression_type": "producer",
+                "delete_retention_ms": "86400000",
+                "file_delete_delay_ms": "60000",
+                "flush_messages": "9223372036854776000",
+                "flush_ms": "9223372036854776000",
+                "index_interval_bytes": "4096",
+                "local_retention_bytes": "-2",
+                "local_retention_ms": "-2",
+                "max_compaction_lag_ms": "9223372036854776000",
+                "max_message_bytes": "1048588",
+                "message_downconversion_enable": true,
+                "message_format_version": "3.0-IV1",
+                "message_timestamp_difference_max_ms": "9223372036854776000",
+                "message_timestamp_type": "CreateTime",
+                "min_cleanable_dirty_ratio": 0.5,
+                "min_compaction_lag_ms": "0",
+                "min_insync_replicas": "1",
+                "preallocate": false,
+                "remote_storage_enable": false,
+                "retention_bytes": "-1",
+                "retention_ms": "604800000",
+                "segment_bytes": "1073741824",
+                "segment_index_bytes": "10485760",
+                "segment_jitter_ms": "0",
+                "segment_ms": "604800000",
+                "unclean_leader_election_enable": false
+              }
+            ],
+            "id": "testproject-hpo9/kafka1/topic-0",
+            "owner_user_group_id": "ug4e3b20cee48",
+            "partitions": 3,
+            "project": "testproject-hpo9",
+            "replication": 2,
+            "service_name": "kafka1",
+            "tag": [],
+            "termination_protection": false,
+            "timeouts": null,
+            "topic_description": "",
+            "topic_name": "topic-0"
+          },
+          "sensitive_values": {
+            "config": [
+              {}
+            ],
+            "tag": []
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.bar[1]",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "bar",
+          "index": 1,
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "config": [
+              {
+                "cleanup_policy": "delete",
+                "compression_type": "producer",
+                "delete_retention_ms": "86400000",
+                "file_delete_delay_ms": "60000",
+                "flush_messages": "9223372036854776000",
+                "flush_ms": "9223372036854776000",
+                "index_interval_bytes": "4096",
+                "local_retention_bytes": "-2",
+                "local_retention_ms": "-2",
+                "max_compaction_lag_ms": "9223372036854776000",
+                "max_message_bytes": "1048588",
+                "message_downconversion_enable": true,
+                "message_format_version": "3.0-IV1",
+                "message_timestamp_difference_max_ms": "9223372036854776000",
+                "message_timestamp_type": "CreateTime",
+                "min_cleanable_dirty_ratio": 0.5,
+                "min_compaction_lag_ms": "0",
+                "min_insync_replicas": "1",
+                "preallocate": false,
+                "remote_storage_enable": false,
+                "retention_bytes": "-1",
+                "retention_ms": "604800000",
+                "segment_bytes": "1073741824",
+                "segment_index_bytes": "10485760",
+                "segment_jitter_ms": "0",
+                "segment_ms": "604800000",
+                "unclean_leader_election_enable": false
+              }
+            ],
+            "id": "testproject-hpo9/kafka1/topic-1",
+            "owner_user_group_id": "ug4e3b20cee48",
+            "partitions": 3,
+            "project": "testproject-hpo9",
+            "replication": 2,
+            "service_name": "kafka1",
+            "tag": [],
+            "termination_protection": false,
+            "timeouts": null,
+            "topic_description": "",
+            "topic_name": "topic-1"
+          },
+          "sensitive_values": {
+            "config": [
+              {}
+            ],
+            "tag": []
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.foo",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "config": [
+              {
+                "cleanup_policy": "delete",
+                "compression_type": "producer",
+                "delete_retention_ms": "86400000",
+                "file_delete_delay_ms": "60000",
+                "flush_messages": "9223372036854776000",
+                "flush_ms": "9223372036854776000",
+                "index_interval_bytes": "4096",
+                "local_retention_bytes": "-2",
+                "local_retention_ms": "-2",
+                "max_compaction_lag_ms": "9223372036854776000",
+                "max_message_bytes": "1048588",
+                "message_downconversion_enable": true,
+                "message_format_version": "3.0-IV1",
+                "message_timestamp_difference_max_ms": "9223372036854776000",
+                "message_timestamp_type": "CreateTime",
+                "min_cleanable_dirty_ratio": 0.5,
+                "min_compaction_lag_ms": "0",
+                "min_insync_replicas": "1",
+                "preallocate": false,
+                "remote_storage_enable": false,
+                "retention_bytes": "-1",
+                "retention_ms": "604800000",
+                "segment_bytes": "1073741824",
+                "segment_index_bytes": "10485760",
+                "segment_jitter_ms": "0",
+                "segment_ms": "604800000",
+                "unclean_leader_election_enable": false
+              }
+            ],
+            "id": "testproject-hpo9/kafka1/topic",
+            "owner_user_group_id": "ug4e3b20cee48",
+            "partitions": 3,
+            "project": "testproject-hpo9",
+            "replication": 3,
+            "service_name": "kafka1",
+            "tag": [],
+            "termination_protection": false,
+            "timeouts": null,
+            "topic_description": "",
+            "topic_name": "topic"
+          },
+          "sensitive_values": {
+            "config": [
+              {}
+            ],
+            "tag": []
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.foobar",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foobar",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "config": [],
+            "owner_user_group_id": "ug4e3b20cee48",
+            "partitions": 3,
+            "project": "testproject-hpo9",
+            "replication": 2,
+            "service_name": "kafka1",
+            "tag": [],
+            "termination_protection": false,
+            "timeouts": null,
+            "topic_description": null,
+            "topic_name": "topic-10"
+          },
+          "sensitive_values": {
+            "config": [],
+            "tag": []
+          }
+        },
+        {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "create_time": "2024-09-30 09:03:53 +0000 UTC",
+            "description": "Example group of users.",
+            "group_id": "ug4e3b20db73d",
+            "id": "org4e3706c823b/ug4e3b20db73d",
+            "name": "bar",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "update_time": "2024-09-30 09:03:53 +0000 UTC"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group.foo",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "create_time": "2024-09-30 09:03:53 +0000 UTC",
+            "description": "Example group of users.",
+            "group_id": "ug4e3b20cee48",
+            "id": "org4e3706c823b/ug4e3b20cee48",
+            "name": "foo",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "update_time": "2024-09-30 09:03:53 +0000 UTC"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group_member.alice",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "alice",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "group_id": "ug4e3b20cee48",
+            "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+            "last_activity_time": "2024-09-30 10:18:57 +0000 UTC",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "user_id": "u4e3706199a0"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "group_id": "ug4e3b20cee48",
+            "id": "org4e3706c823b/ug4e3b20cee48/u4e3b0f02414",
+            "last_activity_time": "2024-09-30 08:47:10 +0000 UTC",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "user_id": "u4e3b0f02414"
+          },
+          "sensitive_values": {}
+        }
+      ]
+    }
+  },
+  "resource_drift": [
+    {
+      "address": "aiven_kafka_topic.bar[0]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 0,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "config": [],
+          "id": "testproject-hpo9/kafka1/topic-0",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": null,
+          "topic_name": "topic-0"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-0",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-0"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.bar[1]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 1,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "config": [],
+          "id": "testproject-hpo9/kafka1/topic-1",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": null,
+          "topic_name": "topic-1"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-1",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-1"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.bar[2]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 2,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "config": [],
+          "id": "testproject-hpo9/kafka1/topic-2",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": null,
+          "topic_name": "topic-2"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-2",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-2"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.alice",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "alice",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+          "last_activity_time": "2024-09-30 10:10:08 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3706199a0"
+        },
+        "after": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+          "last_activity_time": "2024-09-30 10:18:57 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3706199a0"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "resource_changes": [
+    {
+      "address": "aiven_kafka.foo",
+      "mode": "managed",
+      "type": "aiven_kafka",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "additional_disk_space": null,
+          "cloud_name": "google-europe-west1",
+          "components": [
+            {
+              "component": "kafka",
+              "connection_uri": "---",
+              "host": "---",
+              "kafka_authentication_method": "certificate",
+              "port": 24686,
+              "route": "dynamic",
+              "ssl": true,
+              "usage": "primary"
+            }
+          ],
+          "default_acl": true,
+          "disk_space": null,
+          "disk_space_cap": "0B",
+          "disk_space_default": "90GiB",
+          "disk_space_step": "0B",
+          "disk_space_used": "90GiB",
+          "id": "testproject-hpo9/kafka1",
+          "kafka": [
+            {
+              "access_cert": "---",
+              "access_key": "---",
+              "connect_uri": "",
+              "rest_uri": "---",
+              "schema_registry_uri": "---",
+              "uris": [
+                "---",
+                "---",
+                "---"
+              ]
+            }
+          ],
+          "kafka_user_config": [
+            {
+              "additional_backup_regions": [],
+              "aiven_kafka_topic_messages": false,
+              "custom_domain": "",
+              "follower_fetching": [],
+              "ip_filter": [
+                "0.0.0.0/0"
+              ],
+              "ip_filter_object": [],
+              "ip_filter_string": [],
+              "kafka": [],
+              "kafka_authentication_methods": [
+                {
+                  "certificate": true,
+                  "sasl": false
+                }
+              ],
+              "kafka_connect": false,
+              "kafka_connect_config": [],
+              "kafka_connect_secret_providers": [],
+              "kafka_rest": false,
+              "kafka_rest_authorization": false,
+              "kafka_rest_config": [],
+              "kafka_sasl_mechanisms": [],
+              "kafka_version": "3.7",
+              "letsencrypt_sasl_privatelink": false,
+              "private_access": [],
+              "privatelink_access": [],
+              "public_access": [],
+              "schema_registry": false,
+              "schema_registry_config": [],
+              "service_log": false,
+              "static_ips": false,
+              "tiered_storage": []
+            }
+          ],
+          "karapace": null,
+          "maintenance_window_dow": "monday",
+          "maintenance_window_time": "10:00:00",
+          "plan": "startup-2",
+          "project": "testproject-hpo9",
+          "project_vpc_id": null,
+          "service_host": "---",
+          "service_integrations": [],
+          "service_name": "kafka1",
+          "service_password": "---",
+          "service_port": 24686,
+          "service_type": "kafka",
+          "service_uri": "---",
+          "service_username": "avnadmin",
+          "state": "RUNNING",
+          "static_ips": [],
+          "tag": [],
+          "tech_emails": [],
+          "termination_protection": false,
+          "timeouts": null
+        },
+        "after": {
+          "additional_disk_space": null,
+          "cloud_name": "google-europe-west1",
+          "components": [
+            {
+              "component": "kafka",
+              "connection_uri": "---",
+              "host": "---",
+              "kafka_authentication_method": "certificate",
+              "port": 24686,
+              "route": "dynamic",
+              "ssl": true,
+              "usage": "primary"
+            }
+          ],
+          "default_acl": true,
+          "disk_space": null,
+          "disk_space_cap": "0B",
+          "disk_space_default": "90GiB",
+          "disk_space_step": "0B",
+          "disk_space_used": "90GiB",
+          "id": "testproject-hpo9/kafka1",
+          "kafka": [
+            {
+              "access_cert": "---",
+              "access_key": "---",
+              "connect_uri": "",
+              "rest_uri": "---",
+              "schema_registry_uri": "---",
+              "uris": [
+                "---",
+                "---",
+                "---"
+              ]
+            }
+          ],
+          "kafka_user_config": [
+            {
+              "additional_backup_regions": [],
+              "aiven_kafka_topic_messages": false,
+              "custom_domain": "",
+              "follower_fetching": [],
+              "ip_filter": [
+                "0.0.0.0/0"
+              ],
+              "ip_filter_object": [],
+              "ip_filter_string": [],
+              "kafka": [],
+              "kafka_authentication_methods": [
+                {
+                  "certificate": true,
+                  "sasl": false
+                }
+              ],
+              "kafka_connect": false,
+              "kafka_connect_config": [],
+              "kafka_connect_secret_providers": [],
+              "kafka_rest": false,
+              "kafka_rest_authorization": false,
+              "kafka_rest_config": [],
+              "kafka_sasl_mechanisms": [],
+              "kafka_version": "3.7",
+              "letsencrypt_sasl_privatelink": false,
+              "private_access": [],
+              "privatelink_access": [],
+              "public_access": [],
+              "schema_registry": false,
+              "schema_registry_config": [],
+              "service_log": false,
+              "static_ips": false,
+              "tiered_storage": []
+            }
+          ],
+          "karapace": null,
+          "maintenance_window_dow": "monday",
+          "maintenance_window_time": "10:00:00",
+          "plan": "startup-2",
+          "project": "testproject-hpo9",
+          "project_vpc_id": null,
+          "service_host": "---",
+          "service_integrations": [],
+          "service_name": "kafka1",
+          "service_password": "---",
+          "service_port": 24686,
+          "service_type": "kafka",
+          "service_uri": "---",
+          "service_username": "avnadmin",
+          "state": "RUNNING",
+          "static_ips": [],
+          "tag": [],
+          "tech_emails": [],
+          "termination_protection": false,
+          "timeouts": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "components": [
+            {}
+          ],
+          "kafka": [
+            {
+              "access_cert": true,
+              "access_key": true,
+              "connect_uri": true,
+              "rest_uri": true,
+              "schema_registry_uri": true,
+              "uris": true
+            }
+          ],
+          "kafka_user_config": [
+            {
+              "additional_backup_regions": [],
+              "follower_fetching": [],
+              "ip_filter": [
+                false
+              ],
+              "ip_filter_object": [],
+              "ip_filter_string": [],
+              "kafka": [],
+              "kafka_authentication_methods": [
+                {}
+              ],
+              "kafka_connect_config": [],
+              "kafka_connect_secret_providers": [],
+              "kafka_rest_config": [],
+              "kafka_sasl_mechanisms": [],
+              "private_access": [],
+              "privatelink_access": [],
+              "public_access": [],
+              "schema_registry_config": [],
+              "tiered_storage": []
+            }
+          ],
+          "service_integrations": [],
+          "service_password": true,
+          "service_uri": true,
+          "static_ips": [],
+          "tag": [],
+          "tech_emails": []
+        },
+        "after_sensitive": {
+          "components": [
+            {}
+          ],
+          "kafka": [
+            {
+              "access_cert": true,
+              "access_key": true,
+              "connect_uri": true,
+              "rest_uri": true,
+              "schema_registry_uri": true,
+              "uris": true
+            }
+          ],
+          "kafka_user_config": [
+            {
+              "additional_backup_regions": [],
+              "follower_fetching": [],
+              "ip_filter": [
+                false
+              ],
+              "ip_filter_object": [],
+              "ip_filter_string": [],
+              "kafka": [],
+              "kafka_authentication_methods": [
+                {}
+              ],
+              "kafka_connect_config": [],
+              "kafka_connect_secret_providers": [],
+              "kafka_rest_config": [],
+              "kafka_sasl_mechanisms": [],
+              "private_access": [],
+              "privatelink_access": [],
+              "public_access": [],
+              "schema_registry_config": [],
+              "tiered_storage": []
+            }
+          ],
+          "service_integrations": [],
+          "service_password": true,
+          "service_uri": true,
+          "static_ips": [],
+          "tag": [],
+          "tech_emails": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.bar[0]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 0,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-0",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-0"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-0",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-0"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.bar[1]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 1,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-1",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-1"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-1",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-1"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.bar[2]",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "bar",
+      "index": 2,
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic-2",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic-2"
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        },
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_count_index"
+    },
+    {
+      "address": "aiven_kafka_topic.foo",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic"
+        },
+        "after": {
+          "config": [
+            {
+              "cleanup_policy": "delete",
+              "compression_type": "producer",
+              "delete_retention_ms": "86400000",
+              "file_delete_delay_ms": "60000",
+              "flush_messages": "9223372036854776000",
+              "flush_ms": "9223372036854776000",
+              "index_interval_bytes": "4096",
+              "local_retention_bytes": "-2",
+              "local_retention_ms": "-2",
+              "max_compaction_lag_ms": "9223372036854776000",
+              "max_message_bytes": "1048588",
+              "message_downconversion_enable": true,
+              "message_format_version": "3.0-IV1",
+              "message_timestamp_difference_max_ms": "9223372036854776000",
+              "message_timestamp_type": "CreateTime",
+              "min_cleanable_dirty_ratio": 0.5,
+              "min_compaction_lag_ms": "0",
+              "min_insync_replicas": "1",
+              "preallocate": false,
+              "remote_storage_enable": false,
+              "retention_bytes": "-1",
+              "retention_ms": "604800000",
+              "segment_bytes": "1073741824",
+              "segment_index_bytes": "10485760",
+              "segment_jitter_ms": "0",
+              "segment_ms": "604800000",
+              "unclean_leader_election_enable": false
+            }
+          ],
+          "id": "testproject-hpo9/kafka1/topic",
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 3,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": "",
+          "topic_name": "topic"
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        },
+        "after_sensitive": {
+          "config": [
+            {}
+          ],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.foobar",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "foobar",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "config": [],
+          "owner_user_group_id": "ug4e3b20cee48",
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": null,
+          "topic_name": "topic-10"
+        },
+        "after_unknown": {
+          "config": [],
+          "id": true,
+          "tag": []
+        },
+        "before_sensitive": false,
+        "after_sensitive": {
+          "config": [],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_organization_user_group.bar",
+      "mode": "managed",
+      "type": "aiven_organization_user_group",
+      "name": "bar",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "create_time": "2024-09-30 09:03:53 +0000 UTC",
+          "description": "Example group of users.",
+          "group_id": "ug4e3b20db73d",
+          "id": "org4e3706c823b/ug4e3b20db73d",
+          "name": "bar",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "update_time": "2024-09-30 09:03:53 +0000 UTC"
+        },
+        "after": {
+          "create_time": "2024-09-30 09:03:53 +0000 UTC",
+          "description": "Example group of users.",
+          "group_id": "ug4e3b20db73d",
+          "id": "org4e3706c823b/ug4e3b20db73d",
+          "name": "bar",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "update_time": "2024-09-30 09:03:53 +0000 UTC"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group.foo",
+      "mode": "managed",
+      "type": "aiven_organization_user_group",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "create_time": "2024-09-30 09:03:53 +0000 UTC",
+          "description": "Example group of users.",
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48",
+          "name": "foo",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "update_time": "2024-09-30 09:03:53 +0000 UTC"
+        },
+        "after": {
+          "create_time": "2024-09-30 09:03:53 +0000 UTC",
+          "description": "Example group of users.",
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48",
+          "name": "foo",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "update_time": "2024-09-30 09:03:53 +0000 UTC"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.alice",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "alice",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+          "last_activity_time": "2024-09-30 10:18:57 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3706199a0"
+        },
+        "after": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+          "last_activity_time": "2024-09-30 10:18:57 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3706199a0"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.bob",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "bob",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3b0f02414",
+          "last_activity_time": "2024-09-30 08:47:10 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3b0f02414"
+        },
+        "after": {
+          "group_id": "ug4e3b20cee48",
+          "id": "org4e3706c823b/ug4e3b20cee48/u4e3b0f02414",
+          "last_activity_time": "2024-09-30 08:47:10 +0000 UTC",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3b0f02414"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "prior_state": {
+    "format_version": "1.0",
+    "terraform_version": "1.5.7",
+    "values": {
+      "root_module": {
+        "resources": [
+          {
+            "address": "data.aiven_external_identity.alice",
+            "mode": "data",
+            "type": "aiven_external_identity",
+            "name": "alice",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "external_service_name": "github",
+              "external_user_id": "alice",
+              "internal_user_id": "u4e3706199a0",
+              "organization_id": "org4e3706c823b"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_external_identity.bob",
+            "mode": "data",
+            "type": "aiven_external_identity",
+            "name": "bob",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "external_service_name": "github",
+              "external_user_id": "bob",
+              "internal_user_id": "u4e3b0f02414",
+              "organization_id": "org4e3706c823b"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization.foo",
+            "mode": "data",
+            "type": "aiven_organization",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b",
+              "name": "My Organization",
+              "tenant_id": "aiven",
+              "update_time": "2024-09-29 19:56:17 +0000 UTC"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization_user.bar",
+            "mode": "data",
+            "type": "aiven_organization_user",
+            "name": "bar",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-30 08:51:19 +0000 UTC",
+              "id": "org4e3706c823b/alice2@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice2@aiven.fi",
+              "user_id": "u4e3b0f02414"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization_user.foo",
+            "mode": "data",
+            "type": "aiven_organization_user",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b/alice@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice@aiven.fi",
+              "user_id": "u4e3706199a0"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_project.foo",
+            "mode": "data",
+            "type": "aiven_project",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "account_id": "a4e3706c4c40",
+              "add_account_owners_admin_access": null,
+              "available_credits": "0.00",
+              "billing_group": "c36747f3-f78b-496c-b430-56c78e996fd9",
+              "ca_cert": "-----BEGIN CERTIFICATE-----\nMIIEQTCCAqmgAwIBAgIUZ99O2FaFgjO1bZKskgJdzli5Zb8wDQYJKoZIhvcNAQEM\nBQAwOjE4MDYGA1UEAwwvZjYxZmRhZmUtMGNmYi00ZWNjLTliZDgtNjYxOTgwZTI1\nYmNjIFByb2plY3QgQ0EwHhcNMjQwOTI5MTUzNDA0WhcNMzQwOTI3MTUzNDA0WjA6\nMTgwNgYDVQQDDC9mNjFmZGFmZS0wY2ZiLTRlY2MtOWJkOC02NjE5ODBlMjViY2Mg\nUHJvamVjdCBDQTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAORANMJu\nMeOFX0yjm4JmkEayJ2vSUaMuSrttn7kycyMBkEfQi132aaQxVVJc3/o312BE901l\nL0vl7iPqSAxKYsQiOgTqFBd4xin+kHqjsuKPmNr2qFs9rW46B9zKe7vFz8TXnLDO\nPldIQWrH7shfesO99ShgMiGmHOivYj79HQFqZ+VCmPJw+HPwL+ILSnawm7OpoY22\nerqtNcphBWrNGyfNp5zIiJ2Jm6Gu98GTxedS8BL4Ac5/O/ogC/pfJS2ZgFWFUbm9\nmoFKYxI2oyphruOQuRcXyt3gek7L45fXsWPJrQvSTtUkJEN0ScitD1lRcoIS0biv\nF81EckI1dJCxa6aGCUalasSz5afzHD7F8I5U2CrFeyzxJX+/XKxhjREUn0h2TmB6\n3hEHCPBfQTLkwnLX3d/XAibDmqUAxA7RSn1J2aG8//fmp+SsL+fww+BtHnrQfUkr\nvC48fS5uzXq5rHe6RNtlEL5cnd7BlKzTxFjh8oRXRGxnMxoTF8oiOkJP5wIDAQAB\noz8wPTAdBgNVHQ4EFgQUmYAlSze4PFvIBsYXS23UJt3WeFowDwYDVR0TBAgwBgEB\n/wIBADALBgNVHQ8EBAMCAQYwDQYJKoZIhvcNAQEMBQADggGBAHEAzLwxhCy3nn3a\nNpRcigDR9ywDnFNLAlAeO9QW5PhtNesd5dzi4xKE5us1qzjqyc/69AbpsQEg+Js4\npR4hmX58ARvynfXIuk1QP67f+Ey/KiZVOo5ZPIpctLy/7AHyTo7kRgein4/7jM6z\nEH8g+AG+Vq3lkOOEaQ/N2b5duImvGz5O2mJxor885XnqIJoVzSg2b4iYqcVCo77y\nfN7AIKs0S+tPMdzgDC8XuEF6/v58ta/qEPiQNjiisQvJpInaiBno5QHTz4UQQCdQ\nKiDATiaOAkDqlRBiOs6WNPvcOeZQ9RDyfnC7bImChz7+qq5ZK64j2y4F9srehNH5\n3P0Sj7aGWkLj6ZVHqS2IQMxHJQSo9cRVCZPLw9usRQ49pAFdbdx6cZja9dLDoqbP\nTp4Dcl6PiOIrtpE9rPCFr4KsJ+RENVlK/5i2wHdes8KOsxtM7tELHredKuZw4JKL\nVPcNlLjqH3f+OabBP2AC8TEjJYM8yJCX7mGbza/QZL9Oa+ZBvQ==\n-----END CERTIFICATE-----\n",
+              "copy_from_project": null,
+              "default_cloud": "google-europe-west1",
+              "estimated_balance": "0.55",
+              "id": "testproject-hpo9",
+              "parent_id": null,
+              "payment_method": "card",
+              "project": "testproject-hpo9",
+              "tag": [],
+              "technical_emails": [],
+              "use_source_project_billing_group": null
+            },
+            "sensitive_values": {
+              "ca_cert": true,
+              "tag": [],
+              "technical_emails": []
+            }
+          },
+          {
+            "address": "aiven_kafka.foo",
+            "mode": "managed",
+            "type": "aiven_kafka",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 1,
+            "values": {
+              "additional_disk_space": null,
+              "cloud_name": "google-europe-west1",
+              "components": [
+                {
+                  "component": "kafka",
+                  "connection_uri": "---",
+                  "host": "---",
+                  "kafka_authentication_method": "certificate",
+                  "port": 24686,
+                  "route": "dynamic",
+                  "ssl": true,
+                  "usage": "primary"
+                }
+              ],
+              "default_acl": true,
+              "disk_space": null,
+              "disk_space_cap": "0B",
+              "disk_space_default": "90GiB",
+              "disk_space_step": "0B",
+              "disk_space_used": "90GiB",
+              "id": "testproject-hpo9/kafka1",
+              "kafka": [
+                {
+                  "access_cert": "---",
+                  "access_key": "---",
+                  "connect_uri": "",
+                  "rest_uri": "---",
+                  "schema_registry_uri": "---",
+                  "uris": [
+                    "---",
+                    "---",
+                    "---"
+                  ]
+                }
+              ],
+              "kafka_user_config": [
+                {
+                  "additional_backup_regions": [],
+                  "aiven_kafka_topic_messages": false,
+                  "custom_domain": "",
+                  "follower_fetching": [],
+                  "ip_filter": [
+                    "0.0.0.0/0"
+                  ],
+                  "ip_filter_object": [],
+                  "ip_filter_string": [],
+                  "kafka": [],
+                  "kafka_authentication_methods": [
+                    {
+                      "certificate": true,
+                      "sasl": false
+                    }
+                  ],
+                  "kafka_connect": false,
+                  "kafka_connect_config": [],
+                  "kafka_connect_secret_providers": [],
+                  "kafka_rest": false,
+                  "kafka_rest_authorization": false,
+                  "kafka_rest_config": [],
+                  "kafka_sasl_mechanisms": [],
+                  "kafka_version": "3.7",
+                  "letsencrypt_sasl_privatelink": false,
+                  "private_access": [],
+                  "privatelink_access": [],
+                  "public_access": [],
+                  "schema_registry": false,
+                  "schema_registry_config": [],
+                  "service_log": false,
+                  "static_ips": false,
+                  "tiered_storage": []
+                }
+              ],
+              "karapace": null,
+              "maintenance_window_dow": "monday",
+              "maintenance_window_time": "10:00:00",
+              "plan": "startup-2",
+              "project": "testproject-hpo9",
+              "project_vpc_id": null,
+              "service_host": "---",
+              "service_integrations": [],
+              "service_name": "kafka1",
+              "service_password": "---",
+              "service_port": 24686,
+              "service_type": "kafka",
+              "service_uri": "---",
+              "service_username": "avnadmin",
+              "state": "RUNNING",
+              "static_ips": [],
+              "tag": [],
+              "tech_emails": [],
+              "termination_protection": false,
+              "timeouts": null
+            },
+            "sensitive_values": {
+              "components": [
+                {}
+              ],
+              "kafka": [
+                {
+                  "access_cert": true,
+                  "access_key": true,
+                  "connect_uri": true,
+                  "rest_uri": true,
+                  "schema_registry_uri": true,
+                  "uris": true
+                }
+              ],
+              "kafka_user_config": [
+                {
+                  "additional_backup_regions": [],
+                  "follower_fetching": [],
+                  "ip_filter": [
+                    false
+                  ],
+                  "ip_filter_object": [],
+                  "ip_filter_string": [],
+                  "kafka": [],
+                  "kafka_authentication_methods": [
+                    {}
+                  ],
+                  "kafka_connect_config": [],
+                  "kafka_connect_secret_providers": [],
+                  "kafka_rest_config": [],
+                  "kafka_sasl_mechanisms": [],
+                  "private_access": [],
+                  "privatelink_access": [],
+                  "public_access": [],
+                  "schema_registry_config": [],
+                  "tiered_storage": []
+                }
+              ],
+              "service_integrations": [],
+              "service_password": true,
+              "service_uri": true,
+              "static_ips": [],
+              "tag": [],
+              "tech_emails": []
+            },
+            "depends_on": [
+              "data.aiven_project.foo"
+            ]
+          },
+          {
+            "address": "aiven_kafka_topic.bar[0]",
+            "mode": "managed",
+            "type": "aiven_kafka_topic",
+            "name": "bar",
+            "index": 0,
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 1,
+            "values": {
+              "config": [
+                {
+                  "cleanup_policy": "delete",
+                  "compression_type": "producer",
+                  "delete_retention_ms": "86400000",
+                  "file_delete_delay_ms": "60000",
+                  "flush_messages": "9223372036854776000",
+                  "flush_ms": "9223372036854776000",
+                  "index_interval_bytes": "4096",
+                  "local_retention_bytes": "-2",
+                  "local_retention_ms": "-2",
+                  "max_compaction_lag_ms": "9223372036854776000",
+                  "max_message_bytes": "1048588",
+                  "message_downconversion_enable": true,
+                  "message_format_version": "3.0-IV1",
+                  "message_timestamp_difference_max_ms": "9223372036854776000",
+                  "message_timestamp_type": "CreateTime",
+                  "min_cleanable_dirty_ratio": 0.5,
+                  "min_compaction_lag_ms": "0",
+                  "min_insync_replicas": "1",
+                  "preallocate": false,
+                  "remote_storage_enable": false,
+                  "retention_bytes": "-1",
+                  "retention_ms": "604800000",
+                  "segment_bytes": "1073741824",
+                  "segment_index_bytes": "10485760",
+                  "segment_jitter_ms": "0",
+                  "segment_ms": "604800000",
+                  "unclean_leader_election_enable": false
+                }
+              ],
+              "id": "testproject-hpo9/kafka1/topic-0",
+              "owner_user_group_id": "ug4e3b20cee48",
+              "partitions": 3,
+              "project": "testproject-hpo9",
+              "replication": 2,
+              "service_name": "kafka1",
+              "tag": [],
+              "termination_protection": false,
+              "timeouts": null,
+              "topic_description": "",
+              "topic_name": "topic-0"
+            },
+            "sensitive_values": {
+              "config": [
+                {}
+              ],
+              "tag": []
+            },
+            "depends_on": [
+              "aiven_kafka.foo",
+              "aiven_organization_user_group.foo",
+              "data.aiven_organization.foo",
+              "data.aiven_project.foo"
+            ]
+          },
+          {
+            "address": "aiven_kafka_topic.bar[1]",
+            "mode": "managed",
+            "type": "aiven_kafka_topic",
+            "name": "bar",
+            "index": 1,
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 1,
+            "values": {
+              "config": [
+                {
+                  "cleanup_policy": "delete",
+                  "compression_type": "producer",
+                  "delete_retention_ms": "86400000",
+                  "file_delete_delay_ms": "60000",
+                  "flush_messages": "9223372036854776000",
+                  "flush_ms": "9223372036854776000",
+                  "index_interval_bytes": "4096",
+                  "local_retention_bytes": "-2",
+                  "local_retention_ms": "-2",
+                  "max_compaction_lag_ms": "9223372036854776000",
+                  "max_message_bytes": "1048588",
+                  "message_downconversion_enable": true,
+                  "message_format_version": "3.0-IV1",
+                  "message_timestamp_difference_max_ms": "9223372036854776000",
+                  "message_timestamp_type": "CreateTime",
+                  "min_cleanable_dirty_ratio": 0.5,
+                  "min_compaction_lag_ms": "0",
+                  "min_insync_replicas": "1",
+                  "preallocate": false,
+                  "remote_storage_enable": false,
+                  "retention_bytes": "-1",
+                  "retention_ms": "604800000",
+                  "segment_bytes": "1073741824",
+                  "segment_index_bytes": "10485760",
+                  "segment_jitter_ms": "0",
+                  "segment_ms": "604800000",
+                  "unclean_leader_election_enable": false
+                }
+              ],
+              "id": "testproject-hpo9/kafka1/topic-1",
+              "owner_user_group_id": "ug4e3b20cee48",
+              "partitions": 3,
+              "project": "testproject-hpo9",
+              "replication": 2,
+              "service_name": "kafka1",
+              "tag": [],
+              "termination_protection": false,
+              "timeouts": null,
+              "topic_description": "",
+              "topic_name": "topic-1"
+            },
+            "sensitive_values": {
+              "config": [
+                {}
+              ],
+              "tag": []
+            },
+            "depends_on": [
+              "aiven_kafka.foo",
+              "aiven_organization_user_group.foo",
+              "data.aiven_organization.foo",
+              "data.aiven_project.foo"
+            ]
+          },
+          {
+            "address": "aiven_kafka_topic.bar[2]",
+            "mode": "managed",
+            "type": "aiven_kafka_topic",
+            "name": "bar",
+            "index": 2,
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 1,
+            "values": {
+              "config": [
+                {
+                  "cleanup_policy": "delete",
+                  "compression_type": "producer",
+                  "delete_retention_ms": "86400000",
+                  "file_delete_delay_ms": "60000",
+                  "flush_messages": "9223372036854776000",
+                  "flush_ms": "9223372036854776000",
+                  "index_interval_bytes": "4096",
+                  "local_retention_bytes": "-2",
+                  "local_retention_ms": "-2",
+                  "max_compaction_lag_ms": "9223372036854776000",
+                  "max_message_bytes": "1048588",
+                  "message_downconversion_enable": true,
+                  "message_format_version": "3.0-IV1",
+                  "message_timestamp_difference_max_ms": "9223372036854776000",
+                  "message_timestamp_type": "CreateTime",
+                  "min_cleanable_dirty_ratio": 0.5,
+                  "min_compaction_lag_ms": "0",
+                  "min_insync_replicas": "1",
+                  "preallocate": false,
+                  "remote_storage_enable": false,
+                  "retention_bytes": "-1",
+                  "retention_ms": "604800000",
+                  "segment_bytes": "1073741824",
+                  "segment_index_bytes": "10485760",
+                  "segment_jitter_ms": "0",
+                  "segment_ms": "604800000",
+                  "unclean_leader_election_enable": false
+                }
+              ],
+              "id": "testproject-hpo9/kafka1/topic-2",
+              "owner_user_group_id": "ug4e3b20cee48",
+              "partitions": 3,
+              "project": "testproject-hpo9",
+              "replication": 2,
+              "service_name": "kafka1",
+              "tag": [],
+              "termination_protection": false,
+              "timeouts": null,
+              "topic_description": "",
+              "topic_name": "topic-2"
+            },
+            "sensitive_values": {
+              "config": [
+                {}
+              ],
+              "tag": []
+            },
+            "depends_on": [
+              "aiven_kafka.foo",
+              "aiven_organization_user_group.foo",
+              "data.aiven_project.foo"
+            ]
+          },
+          {
+            "address": "aiven_kafka_topic.foo",
+            "mode": "managed",
+            "type": "aiven_kafka_topic",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 1,
+            "values": {
+              "config": [
+                {
+                  "cleanup_policy": "delete",
+                  "compression_type": "producer",
+                  "delete_retention_ms": "86400000",
+                  "file_delete_delay_ms": "60000",
+                  "flush_messages": "9223372036854776000",
+                  "flush_ms": "9223372036854776000",
+                  "index_interval_bytes": "4096",
+                  "local_retention_bytes": "-2",
+                  "local_retention_ms": "-2",
+                  "max_compaction_lag_ms": "9223372036854776000",
+                  "max_message_bytes": "1048588",
+                  "message_downconversion_enable": true,
+                  "message_format_version": "3.0-IV1",
+                  "message_timestamp_difference_max_ms": "9223372036854776000",
+                  "message_timestamp_type": "CreateTime",
+                  "min_cleanable_dirty_ratio": 0.5,
+                  "min_compaction_lag_ms": "0",
+                  "min_insync_replicas": "1",
+                  "preallocate": false,
+                  "remote_storage_enable": false,
+                  "retention_bytes": "-1",
+                  "retention_ms": "604800000",
+                  "segment_bytes": "1073741824",
+                  "segment_index_bytes": "10485760",
+                  "segment_jitter_ms": "0",
+                  "segment_ms": "604800000",
+                  "unclean_leader_election_enable": false
+                }
+              ],
+              "id": "testproject-hpo9/kafka1/topic",
+              "owner_user_group_id": "ug4e3b20cee48",
+              "partitions": 3,
+              "project": "testproject-hpo9",
+              "replication": 2,
+              "service_name": "kafka1",
+              "tag": [],
+              "termination_protection": false,
+              "timeouts": null,
+              "topic_description": "",
+              "topic_name": "topic"
+            },
+            "sensitive_values": {
+              "config": [
+                {}
+              ],
+              "tag": []
+            },
+            "depends_on": [
+              "aiven_kafka.foo",
+              "aiven_organization_user_group.foo",
+              "data.aiven_organization.foo",
+              "data.aiven_project.foo"
+            ]
+          },
+          {
+            "address": "aiven_organization_user_group.bar",
+            "mode": "managed",
+            "type": "aiven_organization_user_group",
+            "name": "bar",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-30 09:03:53 +0000 UTC",
+              "description": "Example group of users.",
+              "group_id": "ug4e3b20db73d",
+              "id": "org4e3706c823b/ug4e3b20db73d",
+              "name": "bar",
+              "organization_id": "org4e3706c823b",
+              "timeouts": null,
+              "update_time": "2024-09-30 09:03:53 +0000 UTC"
+            },
+            "sensitive_values": {},
+            "depends_on": [
+              "data.aiven_organization.foo"
+            ]
+          },
+          {
+            "address": "aiven_organization_user_group.foo",
+            "mode": "managed",
+            "type": "aiven_organization_user_group",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-30 09:03:53 +0000 UTC",
+              "description": "Example group of users.",
+              "group_id": "ug4e3b20cee48",
+              "id": "org4e3706c823b/ug4e3b20cee48",
+              "name": "foo",
+              "organization_id": "org4e3706c823b",
+              "timeouts": null,
+              "update_time": "2024-09-30 09:03:53 +0000 UTC"
+            },
+            "sensitive_values": {},
+            "depends_on": [
+              "data.aiven_organization.foo"
+            ]
+          },
+          {
+            "address": "aiven_organization_user_group_member.alice",
+            "mode": "managed",
+            "type": "aiven_organization_user_group_member",
+            "name": "alice",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "group_id": "ug4e3b20cee48",
+              "id": "org4e3706c823b/ug4e3b20cee48/u4e3706199a0",
+              "last_activity_time": "2024-09-30 10:18:57 +0000 UTC",
+              "organization_id": "org4e3706c823b",
+              "timeouts": null,
+              "user_id": "u4e3706199a0"
+            },
+            "sensitive_values": {},
+            "depends_on": [
+              "aiven_organization_user_group.foo",
+              "data.aiven_organization.foo",
+              "data.aiven_organization_user.foo"
+            ]
+          },
+          {
+            "address": "aiven_organization_user_group_member.bob",
+            "mode": "managed",
+            "type": "aiven_organization_user_group_member",
+            "name": "bob",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "group_id": "ug4e3b20cee48",
+              "id": "org4e3706c823b/ug4e3b20cee48/u4e3b0f02414",
+              "last_activity_time": "2024-09-30 08:47:10 +0000 UTC",
+              "organization_id": "org4e3706c823b",
+              "timeouts": null,
+              "user_id": "u4e3b0f02414"
+            },
+            "sensitive_values": {},
+            "depends_on": [
+              "aiven_organization_user_group.foo",
+              "data.aiven_organization.foo",
+              "data.aiven_organization_user.bar"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "configuration": {
+    "provider_config": {
+      "aiven": {
+        "name": "aiven",
+        "full_name": "registry.terraform.io/aiven/aiven",
+        "version_constraint": ">= 4.0.0, < 5.0.0",
+        "expressions": {
+          "api_token": {
+            "constant_value": "---"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aiven_kafka.foo",
+          "mode": "managed",
+          "type": "aiven_kafka",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "cloud_name": {
+              "constant_value": "google-europe-west1"
+            },
+            "maintenance_window_dow": {
+              "constant_value": "monday"
+            },
+            "maintenance_window_time": {
+              "constant_value": "10:00:00"
+            },
+            "plan": {
+              "constant_value": "startup-2"
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "service_name": {
+              "constant_value": "kafka1"
+            }
+          },
+          "schema_version": 1
+        },
+        {
+          "address": "aiven_kafka_topic.bar",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "owner_user_group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "partitions": {
+              "constant_value": 3
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "replication": {
+              "constant_value": 2
+            },
+            "service_name": {
+              "references": [
+                "aiven_kafka.foo.service_name",
+                "aiven_kafka.foo"
+              ]
+            },
+            "topic_name": {
+              "references": [
+                "count.index"
+              ]
+            }
+          },
+          "schema_version": 1,
+          "count_expression": {
+            "constant_value": 2
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.foo",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "owner_user_group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "partitions": {
+              "constant_value": 3
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "replication": {
+              "constant_value": 3
+            },
+            "service_name": {
+              "references": [
+                "aiven_kafka.foo.service_name",
+                "aiven_kafka.foo"
+              ]
+            },
+            "topic_name": {
+              "constant_value": "topic"
+            }
+          },
+          "schema_version": 1
+        },
+        {
+          "address": "aiven_kafka_topic.foobar",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foobar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "owner_user_group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "partitions": {
+              "constant_value": 3
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "replication": {
+              "constant_value": 2
+            },
+            "service_name": {
+              "references": [
+                "aiven_kafka.foo.service_name",
+                "aiven_kafka.foo"
+              ]
+            },
+            "topic_name": {
+              "constant_value": "topic-10"
+            }
+          },
+          "schema_version": 1
+        },
+        {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "description": {
+              "constant_value": "Example group of users."
+            },
+            "name": {
+              "constant_value": "bar"
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group.foo",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "description": {
+              "constant_value": "Example group of users."
+            },
+            "name": {
+              "constant_value": "foo"
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group_member.alice",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "alice",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "data.aiven_organization_user.foo.user_id",
+                "data.aiven_organization_user.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_external_identity.alice",
+          "mode": "data",
+          "type": "aiven_external_identity",
+          "name": "alice",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "external_service_name": {
+              "constant_value": "github"
+            },
+            "external_user_id": {
+              "constant_value": "alice"
+            },
+            "internal_user_id": {
+              "references": [
+                "data.aiven_organization_user.foo.user_id",
+                "data.aiven_organization_user.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_external_identity.bob",
+          "mode": "data",
+          "type": "aiven_external_identity",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "external_service_name": {
+              "constant_value": "github"
+            },
+            "external_user_id": {
+              "constant_value": "bob"
+            },
+            "internal_user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization.foo",
+          "mode": "data",
+          "type": "aiven_organization",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "name": {
+              "constant_value": "My Organization"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization_user.bar",
+          "mode": "data",
+          "type": "aiven_organization_user",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_email": {
+              "constant_value": "alice2@aiven.fi"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization_user.foo",
+          "mode": "data",
+          "type": "aiven_organization_user",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_email": {
+              "constant_value": "alice@aiven.fi"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_project.foo",
+          "mode": "data",
+          "type": "aiven_project",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "project": {
+              "constant_value": "testproject-hpo9"
+            }
+          },
+          "schema_version": 0
+        }
+      ]
+    }
+  },
+  "relevant_attributes": [
+    {
+      "resource": "aiven_organization_user_group.foo",
+      "attribute": [
+        "group_id"
+      ]
+    },
+    {
+      "resource": "data.aiven_project.foo",
+      "attribute": [
+        "project"
+      ]
+    },
+    {
+      "resource": "aiven_kafka.foo",
+      "attribute": [
+        "service_name"
+      ]
+    }
+  ],
+  "timestamp": "2024-09-30T10:18:57Z"
+}

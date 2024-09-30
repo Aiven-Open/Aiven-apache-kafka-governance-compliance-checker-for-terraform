@@ -21,7 +21,7 @@ type Plan struct {
 type State struct {
 	Values struct {
 		RootModule struct {
-			Resources []Resource `json:"resources"`
+			Resources []StateResource `json:"resources"`
 		} `json:"root_module"`
 	} `json:"values"`
 }
@@ -52,7 +52,7 @@ type ConfigResource struct {
 	} `json:"expressions"`
 }
 
-type Resource struct {
+type StateResource struct {
 	Type    ResourceType `json:"type"`
 	Name    string       `json:"name"`
 	Address string       `json:"address"`
@@ -65,6 +65,14 @@ type Resource struct {
 	} `json:"values"`
 }
 
+type ChangeResource struct {
+	InternalUserID   string  `json:"internal_user_id"`
+	ExternalUserID   string  `json:"external_user_id"`
+	OwnerUserGroupID *string `json:"owner_user_group_id"`
+	GroupID          *string `json:"group_id"`
+	UserID           *string `json:"user_id"`
+}
+
 type ResourceChange struct {
 	Type    ResourceType `json:"type"`
 	Name    string       `json:"name"`
@@ -73,9 +81,9 @@ type ResourceChange struct {
 }
 
 type Change struct {
-	Actions      []string `json:"actions"`
-	Before       Resource `json:"before"`
-	After        Resource `json:"after"`
+	Actions      []string       `json:"actions"`
+	Before       ChangeResource `json:"before"`
+	After        ChangeResource `json:"after"`
 	AfterUnknown struct {
 		OwnerUserGroupID bool `json:"owner_user_group_id"`
 	} `json:"after_unknown"`
@@ -114,7 +122,7 @@ func main() {
 
 	var plan Plan
 	if unmarshalErr := json.Unmarshal(content, &plan); unmarshalErr != nil {
-		log.Fatal(unmarshalErr)
+		log.Fatal("Invalid plan JSON file")
 	}
 
 	result := Result{Ok: true, Errors: []ResultError{}}
@@ -132,7 +140,7 @@ func main() {
 	fmt.Println(string(output))
 }
 
-func findExternalIdentity(userID string, plan *Plan) *Resource {
+func findExternalIdentity(userID string, plan *Plan) *StateResource {
 	for _, resource := range plan.State.Values.RootModule.Resources {
 		if resource.Type == AivenExternalIdentity && userID == resource.Values.ExternalUserID {
 			return &resource
@@ -141,8 +149,8 @@ func findExternalIdentity(userID string, plan *Plan) *Resource {
 	return nil
 }
 
-func findApprovers(approverIDs []string, plan *Plan) []*Resource {
-	var approvers []*Resource
+func findApprovers(approverIDs []string, plan *Plan) []*StateResource {
+	var approvers []*StateResource
 	for _, approverID := range approverIDs {
 		approvers = append(approvers, findExternalIdentity(approverID, plan))
 	}
@@ -150,88 +158,81 @@ func findApprovers(approverIDs []string, plan *Plan) []*Resource {
 }
 
 func validateKafkaTopicChange(
-	resourceChange ResourceChange,
-	requester *Resource,
-	approvers []*Resource,
+	topic ResourceChange,
+	requester *StateResource,
+	approvers []*StateResource,
 	plan *Plan,
 	result *Result,
 ) {
-	if resourceChange.Change.AfterUnknown.OwnerUserGroupID {
-		validateKafkaTopicOwnerFromConfig(resourceChange, requester, plan, result)
+	if topic.Change.AfterUnknown.OwnerUserGroupID {
+		validateKafkaTopicOwnerFromConfig(topic, requester, approvers, plan, result)
+		return
 	}
-	if slices.Contains(resourceChange.Change.Actions, "create") {
-		validateKafkaTopicOwnerFromState(resourceChange.Change.After, requester, approvers, plan, result)
+	if slices.Contains(topic.Change.Actions, "create") {
+		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.After, requester, approvers, plan, result)
 	}
-	if slices.Contains(resourceChange.Change.Actions, "update") {
-		validateKafkaTopicOwnerFromState(resourceChange.Change.Before, requester, approvers, plan, result)
-		validateKafkaTopicOwnerFromState(resourceChange.Change.After, requester, approvers, plan, result)
+	if slices.Contains(topic.Change.Actions, "update") {
+		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.Before, requester, approvers, plan, result)
+		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.After, requester, approvers, plan, result)
 	}
-	if slices.Contains(resourceChange.Change.Actions, "delete") {
-		validateKafkaTopicOwnerFromState(resourceChange.Change.Before, requester, approvers, plan, result)
+	if slices.Contains(topic.Change.Actions, "delete") {
+		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.Before, requester, approvers, plan, result)
 	}
 }
 
 func validateKafkaTopicOwnerFromState(
-	topic Resource,
-	requester *Resource,
-	approvers []*Resource,
+	resourceAddress string,
+	topic ChangeResource,
+	requester *StateResource,
+	approvers []*StateResource,
 	plan *Plan,
 	result *Result,
 ) {
-	if topic.Values.OwnerUserGroupID == nil {
+	if topic.OwnerUserGroupID == nil {
 		return
 	}
 	if requester == nil {
 		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(topic.Address))
+		result.Errors = append(result.Errors, newRequestError(resourceAddress))
 		return
 	}
 
-	if !isUserGroupMember(*topic.Values.OwnerUserGroupID, requester.Values.InternalUserID, plan) {
+	if !isUserGroupMemberFromState(*topic.OwnerUserGroupID, requester.Values.InternalUserID, plan) {
 		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(topic.Address))
+		result.Errors = append(result.Errors, newRequestError(resourceAddress))
 	}
 
 	for _, approver := range approvers {
-		if isUserGroupMember(*topic.Values.OwnerUserGroupID, approver.Values.InternalUserID, plan) {
+		if isUserGroupMemberFromState(*topic.OwnerUserGroupID, approver.Values.InternalUserID, plan) {
 			return
 		}
 	}
 	result.Ok = false
-	result.Errors = append(result.Errors, newApproveError(topic.Address))
+	result.Errors = append(result.Errors, newApproveError(resourceAddress))
 }
 
-func validateKafkaTopicOwnerFromConfig(resourceChange ResourceChange, requester *Resource, plan *Plan, result *Result) {
-	ownerAddress := findOwnerAddress(resourceChange.Address, plan)
-	if ownerAddress == nil {
-		return
-	}
-
-	if requester == nil {
+func validateKafkaTopicOwnerFromConfig(
+	resourceChange ResourceChange,
+	requester *StateResource,
+	approvers []*StateResource,
+	plan *Plan,
+	result *Result,
+) {
+	if !isUserGroupMemberFromConfig(resourceChange, requester, plan) {
 		result.Ok = false
 		result.Errors = append(result.Errors, newRequestError(resourceChange.Address))
-		return
 	}
-
-	userAddress := findUserAddress(requester.Address, plan)
-	if userAddress == nil {
-		return
-	}
-
-	for _, resource := range plan.Configuration.RootModule.Resources {
-		if resource.Type == AivenOrganizationUserGroupMember {
-			groupReference := resource.Expressions.GroupID.References[1]
-			userReference := resource.Expressions.UserID.References[1]
-			if groupReference == *ownerAddress && userReference == *userAddress {
-				return
-			}
+	for _, approver := range approvers {
+		if isUserGroupMemberFromConfig(resourceChange, approver, plan) {
+			return
 		}
 	}
 	result.Ok = false
-	result.Errors = append(result.Errors, newRequestError(resourceChange.Address))
+	result.Errors = append(result.Errors, newApproveError(resourceChange.Address))
+
 }
 
-func findOwnerAddress(resourceAddress string, plan *Plan) *string {
+func findOwnerAddressFromConfig(resourceAddress string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Address == resourceAddress {
 			return &resource.Expressions.OwnerUserGroupID.References[1]
@@ -240,7 +241,7 @@ func findOwnerAddress(resourceAddress string, plan *Plan) *string {
 	return nil
 }
 
-func findUserAddress(resourceAddress string, plan *Plan) *string {
+func findUserAddressFromConfig(resourceAddress string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Address == resourceAddress {
 			return &resource.Expressions.InternalUserID.References[1]
@@ -249,10 +250,33 @@ func findUserAddress(resourceAddress string, plan *Plan) *string {
 	return nil
 }
 
-func isUserGroupMember(groupID string, userID string, plan *Plan) bool {
+func isUserGroupMemberFromState(groupID string, userID string, plan *Plan) bool {
 	for _, resource := range plan.State.Values.RootModule.Resources {
 		if resource.Type == AivenOrganizationUserGroupMember {
 			if *resource.Values.GroupID == groupID && *resource.Values.UserID == userID {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isUserGroupMemberFromConfig(resourceChange ResourceChange, user *StateResource, plan *Plan) bool {
+	ownerAddress := findOwnerAddressFromConfig(resourceChange.Address, plan)
+	if user == nil || ownerAddress == nil {
+		return false
+	}
+
+	userAddress := findUserAddressFromConfig(user.Address, plan)
+	if userAddress == nil {
+		return false
+	}
+
+	for _, resource := range plan.Configuration.RootModule.Resources {
+		if resource.Type == AivenOrganizationUserGroupMember {
+			groupReference := resource.Expressions.GroupID.References[1]
+			userReference := resource.Expressions.UserID.References[1]
+			if groupReference == *ownerAddress && userReference == *userAddress {
 				return true
 			}
 		}
