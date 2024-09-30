@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -36,7 +37,37 @@ func TestMain(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      "data/plan.json",
 			},
-			ExpectStdout: "{\"ok\":true,\"errors\":[]}\n",
+			ExpectStdout: `{"ok":true,"errors":\[\]}`,
+			ExpectStderr: "",
+		},
+		{
+			Name: "MissingArguments",
+			Args: Args{
+				Requester: "",
+				Approvers: "bob,charlie",
+				Plan:      "data/plan.json",
+			},
+			ExpectStdout: "",
+			ExpectStderr: "Missing required arguments\nexit status 1",
+		},
+		{
+			Name: "PlanFileDoesNotExist",
+			Args: Args{
+				Requester: "alice",
+				Approvers: "bob,charlie",
+				Plan:      "data/nonexistent_plan.json",
+			},
+			ExpectStdout: "",
+			ExpectStderr: `open .*data/nonexistent_plan.json: no such file or directory\nexit status 1`,
+		},
+		{
+			Name: "RequesterIsNil",
+			Args: Args{
+				Requester: "nonexistent_user",
+				Approvers: "bob,charlie",
+				Plan:      "data/plan.json",
+			},
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
 			ExpectStderr: "",
 		},
 	}
@@ -44,8 +75,14 @@ func TestMain(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			stdout, stderr, runErr := runCommand(dir, test.Args)
-			if runErr != nil {
-				t.Fatalf("Command execution failed: %v", runErr)
+			if test.ExpectStderr != "" {
+				if runErr == nil {
+					t.Fatalf("Expected an error but got none")
+				}
+			} else {
+				if runErr != nil {
+					t.Fatalf("Command execution failed: %v", runErr)
+				}
 			}
 
 			assertOutput(t, "stdout", stdout, test.ExpectStdout)
@@ -74,7 +111,18 @@ func runCommand(dir string, args Args) (string, string, error) {
 }
 
 func assertOutput(t *testing.T, name, actual, expected string) {
-	if expected != "" && actual != expected {
-		t.Errorf("Expected %s: %s, got: %s", name, expected, actual)
+	actual = strings.TrimSpace(actual)
+	expected = strings.TrimSpace(expected)
+
+	if expected == "" {
+		return
+	}
+
+	matched, err := regexp.MatchString(expected, actual)
+	if err != nil {
+		t.Fatalf("Failed to compile regex: %v", err)
+	}
+	if !matched {
+		t.Errorf("Expected %s to match pattern: %q, but got: %q", name, expected, actual)
 	}
 }
