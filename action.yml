@@ -37,6 +37,8 @@ runs:
 
     - name: "Check compliance"
       id: check-compliance
+      env:
+        PROVIDER_AIVEN_ENABLE_BETA: 1
       run: |
         terraform init
         terraform plan -out=plan -var="aiven_api_token=${{ inputs.AIVEN_API_TOKEN }}"
