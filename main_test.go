@@ -31,26 +31,6 @@ func TestE2E_Args(t *testing.T) {
 
 	tests := []TestCase{
 		{
-			Name: "Requester is required",
-			Args: Args{
-				Requester: "",
-				Approvers: "bob,charlie",
-				Plan:      "testdata/nonexistent_plan.json",
-			},
-			ExpectStdout: "",
-			ExpectStderr: "Missing required arguments\nexit status 1",
-		},
-		{
-			Name: "Approvers is required",
-			Args: Args{
-				Requester: "alice",
-				Approvers: "",
-				Plan:      "testdata/nonexistent_plan.json",
-			},
-			ExpectStdout: "",
-			ExpectStderr: "Missing required arguments\nexit status 1",
-		},
-		{
 			Name: "Plan file needs to exist",
 			Args: Args{
 				Requester: "alice",

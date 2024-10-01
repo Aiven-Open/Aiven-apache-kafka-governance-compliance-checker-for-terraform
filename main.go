@@ -111,7 +111,7 @@ func main() {
 	approverIDs := flag.String("approvers", "", "comma separated list of users identified as the approvers of the change")
 	flag.Parse()
 
-	if *path == "" || *requesterID == "" || *approverIDs == "" {
+	if *path == "" {
 		log.Fatal("Missing required arguments")
 	}
 
