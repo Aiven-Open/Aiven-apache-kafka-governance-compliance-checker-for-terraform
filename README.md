@@ -44,6 +44,40 @@ resource "aiven_kafka_topic" "foo" {
 }
 ```
 
-3. Finally, add the github action into your `.github/workflows`
+3. Finally, use the github action in your `.github/workflows`. For example:
+```yaml
+name: 'Aiven Terraform Governance Compliance Check'
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+
+jobs:
+  aiven_terraform_governance_compliance_check:
+    runs-on: ubuntu-latest
+    steps:
+        - name: "Aiven Terraform Governance Compliance Check Test"
+          id: "compliance-check"
+          uses: aiven/aiven_terraform_governance_compliance_check
+          with:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            AIVEN_API_TOKEN: ${{ secrets.AIVEN_API_TOKEN }}
+        - run: |
+            if [ $(echo ${{ steps.compliance-check.outputs.result }} | jq '.ok') == "true" ]
+                then
+                    echo "OK"
+                else
+                    echo $RESULT | jq
+                    exit 1
+                fi
+```
 
 
