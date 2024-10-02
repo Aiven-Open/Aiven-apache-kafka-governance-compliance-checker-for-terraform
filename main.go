@@ -152,7 +152,10 @@ func findExternalIdentity(userID string, plan *Plan) *StateResource {
 func findApprovers(approverIDs []string, plan *Plan) []*StateResource {
 	var approvers []*StateResource
 	for _, approverID := range approverIDs {
-		approvers = append(approvers, findExternalIdentity(approverID, plan))
+		approver := findExternalIdentity(approverID, plan)
+		if approver != nil {
+			approvers = append(approvers, approver)
+		}
 	}
 	return approvers
 }
@@ -197,13 +200,13 @@ func validateKafkaTopicOwnerFromState(
 		return
 	}
 
-	if !isUserGroupMemberFromState(*topic.OwnerUserGroupID, requester.Values.InternalUserID, plan) {
+	if !isUserGroupMemberFromState(topic, requester, plan) {
 		result.Ok = false
 		result.Errors = append(result.Errors, newRequestError(resourceAddress))
 	}
 
 	for _, approver := range approvers {
-		if isUserGroupMemberFromState(*topic.OwnerUserGroupID, approver.Values.InternalUserID, plan) {
+		if isUserGroupMemberFromState(topic, approver, plan) {
 			return
 		}
 	}
@@ -250,10 +253,10 @@ func findUserAddressFromConfig(resourceAddress string, plan *Plan) *string {
 	return nil
 }
 
-func isUserGroupMemberFromState(groupID string, userID string, plan *Plan) bool {
+func isUserGroupMemberFromState(topic ChangeResource, user *StateResource, plan *Plan) bool {
 	for _, resource := range plan.State.Values.RootModule.Resources {
 		if resource.Type == AivenOrganizationUserGroupMember {
-			if *resource.Values.GroupID == groupID && *resource.Values.UserID == userID {
+			if *resource.Values.GroupID == *topic.OwnerUserGroupID && *resource.Values.UserID == user.Values.InternalUserID {
 				return true
 			}
 		}
