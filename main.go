@@ -128,7 +128,7 @@ func main() {
 	result := Result{Ok: true, Errors: []ResultError{}}
 
 	requester := findExternalIdentity(*requesterID, &plan)
-	approvers := findApprovers(strings.Split(*approverIDs, ","), &plan)
+	approvers := findApprovers(strings.Split(*approverIDs, ","), *requesterID, &plan)
 
 	for _, resourceChange := range plan.Changes {
 		if resourceChange.Type == AivenKafkaTopic {
@@ -149,11 +149,11 @@ func findExternalIdentity(userID string, plan *Plan) *StateResource {
 	return nil
 }
 
-func findApprovers(approverIDs []string, plan *Plan) []*StateResource {
+func findApprovers(approverIDs []string, requesterID string, plan *Plan) []*StateResource {
 	var approvers []*StateResource
 	for _, approverID := range approverIDs {
 		approver := findExternalIdentity(approverID, plan)
-		if approver != nil {
+		if approver != nil && requesterID != approverID {
 			approvers = append(approvers, approver)
 		}
 	}
