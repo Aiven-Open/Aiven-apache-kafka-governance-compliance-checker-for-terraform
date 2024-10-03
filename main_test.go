@@ -126,6 +126,16 @@ func TestE2E_Plans(t *testing.T) {
 				ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
 				ExpectStderr: "",
 			},
+			{
+				Name: fmt.Sprintf("[%s] Does not consider requester as approver", plan),
+				Args: Args{
+					Requester: "alice",
+					Approvers: "alice",
+					Plan:      plan,
+				},
+				ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+				ExpectStderr: "",
+			},
 		}
 		all_tests = append(all_tests, tests...)
 	}
