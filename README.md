@@ -1,6 +1,6 @@
-![Tests](https://github.com/github/docs/actions/workflows/test.yml/badge.svg)
-![Lint](https://github.com/github/docs/actions/workflows/lint.yml/badge.svg)
-![Codeql](https://github.com/github/docs/actions/workflows/codeql.yml/badge.svg)
+![test](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/test.yml/badge.svg)
+![lint](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/lint.yml/badge.svg)
+![codeql](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/codeql.yml/badge.svg)
 
 ## Overview
 This GitHub Action can be used to perform governing checks on terraform aiven provider resources for the terraform generated plan. 
