@@ -1,4 +1,4 @@
-.PHONY: build test format
+.PHONY: build test format lint
 
 build:
 	go build -o build
@@ -8,3 +8,6 @@ test:
 
 format:
 	gofmt -w -s .
+
+lint:
+	golangci-lint run --fix
