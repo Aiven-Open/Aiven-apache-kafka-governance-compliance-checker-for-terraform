@@ -72,73 +72,145 @@ func TestE2E_Args(t *testing.T) {
 	}
 }
 
-func TestE2E_Plans(t *testing.T) {
+func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 	dir, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
 
-	all_tests := make([]TestCase, 0)
+	plan := "./testdata/plan_with_known_owner_user_group_id.json"
 
-	plans := make([]string, 0)
-	plans = append(plans, "./testdata/plan_with_known_owner_user_group_id.json")
-	plans = append(plans, "./testdata/plan_with_unknown_owner_user_group_id.json")
+	tests := []TestCase{
+		{
+			Name: fmt.Sprintf("[%s] Reports error if requester identity can not be resolved", plan),
+			Args: Args{
+				Requester: "nonexistent_user",
+				Approvers: "bob,charlie",
+				Plan:      plan,
+			},
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Reports error if requester is not a member of the owner user group", plan),
+			Args: Args{
+				Requester: "charlie",
+				Approvers: "bob,charlie",
+				Plan:      plan,
+			},
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Does not report error if requester is a member of the owner user group", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "bob,charlie",
+				Plan:      plan,
+			},
+			ExpectStdout: `{"ok":true,"errors":\[\]}`,
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Reports error if approval is missing from a member of the owner user group", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "frank",
+				Plan:      plan,
+			},
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Does not consider requester as approver", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "alice",
+				Plan:      plan,
+			},
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+	}
 
-	tests := make([]TestCase, 0)
-	for _, plan := range plans {
-		tests = []TestCase{
-			{
-				Name: fmt.Sprintf("[%s] Reports error if requester identity can not be resolved", plan),
-				Args: Args{
-					Requester: "nonexistent_user",
-					Approvers: "bob,charlie",
-					Plan:      plan,
-				},
-				ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
-				ExpectStderr: "",
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			stdout, stderr, runErr := runCommand(dir, test.Args)
+			if test.ExpectStderr != "" {
+				if runErr == nil {
+					t.Fatalf("Expected an error but got none")
+				}
+			} else {
+				if runErr != nil {
+					t.Fatalf("Command execution failed: %v", runErr)
+				}
+			}
+
+			assertOutput(t, "stdout", stdout, test.ExpectStdout)
+			assertOutput(t, "stderr", stderr, test.ExpectStderr)
+		})
+	}
+}
+
+func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
+	dir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+
+	plan := "./testdata/plan_with_unknown_owner_user_group_id.json"
+
+	tests := []TestCase{
+		{
+			Name: fmt.Sprintf("[%s] Reports error if requester identity can not be resolved", plan),
+			Args: Args{
+				Requester: "nonexistent_user",
+				Approvers: "bob,charlie",
+				Plan:      plan,
 			},
-			{
-				Name: fmt.Sprintf("[%s] Reports error if requester is not a member of the owner user group", plan),
-				Args: Args{
-					Requester: "charlie",
-					Approvers: "bob,charlie",
-					Plan:      plan,
-				},
-				ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
-				ExpectStderr: "",
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Reports error if requester is not a member of the owner user group", plan),
+			Args: Args{
+				Requester: "charlie",
+				Approvers: "bob,charlie",
+				Plan:      plan,
 			},
-			{
-				Name: fmt.Sprintf("[%s] Does not report error if requester is a member of the owner user group", plan),
-				Args: Args{
-					Requester: "alice",
-					Approvers: "bob,charlie",
-					Plan:      plan,
-				},
-				ExpectStdout: `{"ok":true,"errors":\[\]}`, //nolint:lll
-				ExpectStderr: "",
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Does not report error if requester is a member of the owner user group", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "bob,charlie",
+				Plan:      plan,
 			},
-			{
-				Name: fmt.Sprintf("[%s] Reports error if approval is missing from a member of the owner user group", plan),
-				Args: Args{
-					Requester: "alice",
-					Approvers: "frank",
-					Plan:      plan,
-				},
-				ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
-				ExpectStderr: "",
+			ExpectStdout: `{"ok":true,"errors":\[\]}`,
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Reports error if approval is missing from a member of the owner user group", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "frank",
+				Plan:      plan,
 			},
-			{
-				Name: fmt.Sprintf("[%s] Does not consider requester as approver", plan),
-				Args: Args{
-					Requester: "alice",
-					Approvers: "alice",
-					Plan:      plan,
-				},
-				ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
-				ExpectStderr: "",
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
+		{
+			Name: fmt.Sprintf("[%s] Does not consider requester as approver", plan),
+			Args: Args{
+				Requester: "alice",
+				Approvers: "alice",
+				Plan:      plan,
 			},
-		}
-		all_tests = append(all_tests, tests...)
+			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStderr: "",
+		},
 	}
 
 	for _, test := range tests {
