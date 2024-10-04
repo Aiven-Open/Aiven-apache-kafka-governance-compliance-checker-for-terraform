@@ -8,12 +8,11 @@ on:
       - reopened
       - labeled
       - unlabeled
-  push:
 
 jobs:
   codeql:
+    name: Run codeql
     runs-on: ubuntu-latest
-    if: (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'skip workflows')) || github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:

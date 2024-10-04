@@ -1,17 +1,17 @@
 name: Tests
 
 on:
-    pull_request:
-      types:
-        - opened
-        - synchronize
-        - reopened
-        - labeled
-        - unlabeled
-    push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
 
 jobs:
   go_test:
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
