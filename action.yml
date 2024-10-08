@@ -1,0 +1,42 @@
+name: 'aiven_terraform_governance_compliance_check'
+description: 'GitHub Action to perform governance checks on aiven terraform resources for a generated plan'
+author: 'Aiven'
+
+inputs:
+  requester:
+    description: 'The github username that created the pull request (data.aiven_external_identity.external_user_id)'
+    required: true
+  
+  approvers:
+    description: 'The github usernames (csv) that have approved the pull request (data.aiven_external_identity.external_user_id)'
+    required: true
+
+  plan:
+    description: 'The path to a terraform plan.json file'
+    required: true
+
+outputs:
+  result:
+    description: "the compliance result"
+    value: ${{ steps.check.outputs.result }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: Setup go
+    uses: actions/setup-go@v5
+    with:
+      go-version-file: ${{ github.action_path }}/go.mod
+
+  - name: Check Aiven Terraform Governance Compliance
+    id: check
+    run: |
+        RESULT=$(
+          ${{ github.action_path }}/build/checker -plan=${{ inputs.plan }} -requester=${{ inputs.requester }} -approvers=${{ inputs.approvers }}
+        )
+        echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+    shell: bash
+
+branding:
+  icon: 'shield'
+  color: 'orange'

@@ -1,0 +1,798 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.5.7",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aiven_kafka.foo",
+          "mode": "managed",
+          "type": "aiven_kafka",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "additional_disk_space": null,
+            "cloud_name": "google-europe-west1",
+            "default_acl": true,
+            "disk_space": null,
+            "kafka_user_config": [],
+            "karapace": null,
+            "maintenance_window_dow": "monday",
+            "maintenance_window_time": "10:00:00",
+            "plan": "startup-2",
+            "project": "testproject-hpo9",
+            "project_vpc_id": null,
+            "service_integrations": [],
+            "service_name": "kafka1",
+            "service_type": "kafka",
+            "static_ips": null,
+            "tag": [],
+            "tech_emails": [],
+            "termination_protection": false,
+            "timeouts": null
+          },
+          "sensitive_values": {
+            "components": [],
+            "kafka": [],
+            "kafka_user_config": [],
+            "service_integrations": [],
+            "tag": [],
+            "tech_emails": []
+          }
+        },
+        {
+          "address": "aiven_kafka_topic.foo",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 1,
+          "values": {
+            "config": [],
+            "partitions": 3,
+            "project": "testproject-hpo9",
+            "replication": 2,
+            "service_name": "kafka1",
+            "tag": [],
+            "termination_protection": false,
+            "timeouts": null,
+            "topic_description": null,
+            "topic_name": "topic"
+          },
+          "sensitive_values": {
+            "config": [],
+            "tag": []
+          }
+        },
+        {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "description": "Example group of users.",
+            "name": "bar",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group.foo",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "foo",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "description": "Example group of users.",
+            "name": "foo",
+            "organization_id": "org4e3706c823b",
+            "timeouts": null
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group_member.alice",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "alice",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "user_id": "u4e3706199a0"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_name": "registry.terraform.io/aiven/aiven",
+          "schema_version": 0,
+          "values": {
+            "organization_id": "org4e3706c823b",
+            "timeouts": null,
+            "user_id": "u4e3b0f02414"
+          },
+          "sensitive_values": {}
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aiven_kafka.foo",
+      "mode": "managed",
+      "type": "aiven_kafka",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "additional_disk_space": null,
+          "cloud_name": "google-europe-west1",
+          "default_acl": true,
+          "disk_space": null,
+          "kafka_user_config": [],
+          "karapace": null,
+          "maintenance_window_dow": "monday",
+          "maintenance_window_time": "10:00:00",
+          "plan": "startup-2",
+          "project": "testproject-hpo9",
+          "project_vpc_id": null,
+          "service_integrations": [],
+          "service_name": "kafka1",
+          "service_type": "kafka",
+          "static_ips": null,
+          "tag": [],
+          "tech_emails": [],
+          "termination_protection": false,
+          "timeouts": null
+        },
+        "after_unknown": {
+          "components": true,
+          "disk_space_cap": true,
+          "disk_space_default": true,
+          "disk_space_step": true,
+          "disk_space_used": true,
+          "id": true,
+          "kafka": true,
+          "kafka_user_config": [],
+          "service_host": true,
+          "service_integrations": [],
+          "service_password": true,
+          "service_port": true,
+          "service_uri": true,
+          "service_username": true,
+          "state": true,
+          "tag": [],
+          "tech_emails": []
+        },
+        "before_sensitive": false,
+        "after_sensitive": {
+          "components": [],
+          "kafka": [],
+          "kafka_user_config": [],
+          "service_integrations": [],
+          "service_password": true,
+          "service_uri": true,
+          "tag": [],
+          "tech_emails": []
+        }
+      }
+    },
+    {
+      "address": "aiven_kafka_topic.foo",
+      "mode": "managed",
+      "type": "aiven_kafka_topic",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "config": [],
+          "partitions": 3,
+          "project": "testproject-hpo9",
+          "replication": 2,
+          "service_name": "kafka1",
+          "tag": [],
+          "termination_protection": false,
+          "timeouts": null,
+          "topic_description": null,
+          "topic_name": "topic"
+        },
+        "after_unknown": {
+          "config": [],
+          "id": true,
+          "owner_user_group_id": true,
+          "tag": []
+        },
+        "before_sensitive": false,
+        "after_sensitive": {
+          "config": [],
+          "tag": []
+        }
+      }
+    },
+    {
+      "address": "aiven_organization_user_group.bar",
+      "mode": "managed",
+      "type": "aiven_organization_user_group",
+      "name": "bar",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "description": "Example group of users.",
+          "name": "bar",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null
+        },
+        "after_unknown": {
+          "create_time": true,
+          "group_id": true,
+          "id": true,
+          "update_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group.foo",
+      "mode": "managed",
+      "type": "aiven_organization_user_group",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "description": "Example group of users.",
+          "name": "foo",
+          "organization_id": "org4e3706c823b",
+          "timeouts": null
+        },
+        "after_unknown": {
+          "create_time": true,
+          "group_id": true,
+          "id": true,
+          "update_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.alice",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "alice",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3706199a0"
+        },
+        "after_unknown": {
+          "group_id": true,
+          "id": true,
+          "last_activity_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aiven_organization_user_group_member.bob",
+      "mode": "managed",
+      "type": "aiven_organization_user_group_member",
+      "name": "bob",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "organization_id": "org4e3706c823b",
+          "timeouts": null,
+          "user_id": "u4e3b0f02414"
+        },
+        "after_unknown": {
+          "group_id": true,
+          "id": true,
+          "last_activity_time": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "prior_state": {
+    "format_version": "1.0",
+    "terraform_version": "1.5.7",
+    "values": {
+      "root_module": {
+        "resources": [
+          {
+            "address": "data.aiven_external_identity.alice",
+            "mode": "data",
+            "type": "aiven_external_identity",
+            "name": "alice",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "external_service_name": "github",
+              "external_user_id": "alice",
+              "internal_user_id": "u4e3706199a0",
+              "organization_id": "org4e3706c823b"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_external_identity.bob",
+            "mode": "data",
+            "type": "aiven_external_identity",
+            "name": "bob",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "external_service_name": "github",
+              "external_user_id": "bob",
+              "internal_user_id": "u4e3b0f02414",
+              "organization_id": "org4e3706c823b"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization.foo",
+            "mode": "data",
+            "type": "aiven_organization",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b",
+              "name": "My Organization",
+              "tenant_id": "aiven",
+              "update_time": "2024-09-29 19:56:17 +0000 UTC"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization_user.bar",
+            "mode": "data",
+            "type": "aiven_organization_user",
+            "name": "bar",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-30 08:51:19 +0000 UTC",
+              "id": "org4e3706c823b/alice2@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice2@aiven.fi",
+              "user_id": "u4e3b0f02414"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_organization_user.foo",
+            "mode": "data",
+            "type": "aiven_organization_user",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "create_time": "2024-09-29 15:34:01 +0000 UTC",
+              "id": "org4e3706c823b/alice@aiven.fi",
+              "organization_id": "org4e3706c823b",
+              "user_email": "alice@aiven.fi",
+              "user_id": "u4e3706199a0"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "data.aiven_project.foo",
+            "mode": "data",
+            "type": "aiven_project",
+            "name": "foo",
+            "provider_name": "registry.terraform.io/aiven/aiven",
+            "schema_version": 0,
+            "values": {
+              "account_id": "a4e3706c4c40",
+              "add_account_owners_admin_access": null,
+              "available_credits": "0.00",
+              "billing_group": "c36747f3-f78b-496c-b430-56c78e996fd9",
+              "ca_cert": "---",
+              "copy_from_project": null,
+              "default_cloud": "google-europe-west1",
+              "estimated_balance": "0.00",
+              "id": "testproject-hpo9",
+              "parent_id": null,
+              "payment_method": "card",
+              "project": "testproject-hpo9",
+              "tag": [],
+              "technical_emails": [],
+              "use_source_project_billing_group": null
+            },
+            "sensitive_values": {
+              "ca_cert": true,
+              "tag": [],
+              "technical_emails": []
+            }
+          }
+        ]
+      }
+    }
+  },
+  "configuration": {
+    "provider_config": {
+      "aiven": {
+        "name": "aiven",
+        "full_name": "registry.terraform.io/aiven/aiven",
+        "version_constraint": ">= 4.0.0, < 5.0.0",
+        "expressions": {
+          "api_token": {
+            "constant_value": "---"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aiven_kafka.foo",
+          "mode": "managed",
+          "type": "aiven_kafka",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "cloud_name": {
+              "constant_value": "google-europe-west1"
+            },
+            "maintenance_window_dow": {
+              "constant_value": "monday"
+            },
+            "maintenance_window_time": {
+              "constant_value": "10:00:00"
+            },
+            "plan": {
+              "constant_value": "startup-2"
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "service_name": {
+              "constant_value": "kafka1"
+            }
+          },
+          "schema_version": 1
+        },
+        {
+          "address": "aiven_kafka_topic.foo",
+          "mode": "managed",
+          "type": "aiven_kafka_topic",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "owner_user_group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "partitions": {
+              "constant_value": 3
+            },
+            "project": {
+              "references": [
+                "data.aiven_project.foo.project",
+                "data.aiven_project.foo"
+              ]
+            },
+            "replication": {
+              "constant_value": 2
+            },
+            "service_name": {
+              "references": [
+                "aiven_kafka.foo.service_name",
+                "aiven_kafka.foo"
+              ]
+            },
+            "topic_name": {
+              "constant_value": "topic"
+            }
+          },
+          "schema_version": 1
+        },
+        {
+          "address": "aiven_organization_user_group.bar",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "description": {
+              "constant_value": "Example group of users."
+            },
+            "name": {
+              "constant_value": "bar"
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group.foo",
+          "mode": "managed",
+          "type": "aiven_organization_user_group",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "description": {
+              "constant_value": "Example group of users."
+            },
+            "name": {
+              "constant_value": "foo"
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group_member.alice",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "alice",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "data.aiven_organization_user.foo.user_id",
+                "data.aiven_organization_user.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "aiven_organization_user_group_member.bob",
+          "mode": "managed",
+          "type": "aiven_organization_user_group_member",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aiven_organization_user_group.foo.group_id",
+                "aiven_organization_user_group.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_external_identity.alice",
+          "mode": "data",
+          "type": "aiven_external_identity",
+          "name": "alice",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "external_service_name": {
+              "constant_value": "github"
+            },
+            "external_user_id": {
+              "constant_value": "alice"
+            },
+            "internal_user_id": {
+              "references": [
+                "data.aiven_organization_user.foo.user_id",
+                "data.aiven_organization_user.foo"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_external_identity.bob",
+          "mode": "data",
+          "type": "aiven_external_identity",
+          "name": "bob",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "external_service_name": {
+              "constant_value": "github"
+            },
+            "external_user_id": {
+              "constant_value": "bob"
+            },
+            "internal_user_id": {
+              "references": [
+                "data.aiven_organization_user.bar.user_id",
+                "data.aiven_organization_user.bar"
+              ]
+            },
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization.foo",
+          "mode": "data",
+          "type": "aiven_organization",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "name": {
+              "constant_value": "My Organization"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization_user.bar",
+          "mode": "data",
+          "type": "aiven_organization_user",
+          "name": "bar",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_email": {
+              "constant_value": "alice2@aiven.fi"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_organization_user.foo",
+          "mode": "data",
+          "type": "aiven_organization_user",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "organization_id": {
+              "references": [
+                "data.aiven_organization.foo.id",
+                "data.aiven_organization.foo"
+              ]
+            },
+            "user_email": {
+              "constant_value": "alice@aiven.fi"
+            }
+          },
+          "schema_version": 0
+        },
+        {
+          "address": "data.aiven_project.foo",
+          "mode": "data",
+          "type": "aiven_project",
+          "name": "foo",
+          "provider_config_key": "aiven",
+          "expressions": {
+            "project": {
+              "constant_value": "testproject-hpo9"
+            }
+          },
+          "schema_version": 0
+        }
+      ]
+    }
+  },
+  "relevant_attributes": [
+    {
+      "resource": "data.aiven_organization.foo",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
+      "resource": "aiven_organization_user_group.foo",
+      "attribute": [
+        "group_id"
+      ]
+    },
+    {
+      "resource": "data.aiven_organization_user.bar",
+      "attribute": [
+        "user_id"
+      ]
+    },
+    {
+      "resource": "data.aiven_organization_user.foo",
+      "attribute": [
+        "user_id"
+      ]
+    },
+    {
+      "resource": "data.aiven_project.foo",
+      "attribute": [
+        "project"
+      ]
+    },
+    {
+      "resource": "aiven_kafka.foo",
+      "attribute": [
+        "service_name"
+      ]
+    }
+  ],
+  "timestamp": "2024-09-30T08:56:33Z"
+}
