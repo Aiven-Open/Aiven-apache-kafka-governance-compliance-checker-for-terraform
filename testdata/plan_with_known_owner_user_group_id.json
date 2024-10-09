@@ -1338,7 +1338,9 @@
           "project": "testproject-hpo9",
           "replication": 2,
           "service_name": "kafka1",
-          "tag": [],
+          "tag": [
+            {"key": "a", "value": "b"}
+          ],
           "termination_protection": false,
           "timeouts": null,
           "topic_description": "",
@@ -1416,7 +1418,7 @@
         "before": null,
         "after": {
           "config": [],
-          "owner_user_group_id": "ug4e3b20cee48",
+          "owner_user_group_id": "",
           "partitions": 3,
           "project": "testproject-hpo9",
           "replication": 2,
