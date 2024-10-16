@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 )
@@ -32,6 +31,16 @@ func TestE2E_Args(t *testing.T) {
 
 	tests := []TestCase{
 		{
+			Name: "Plan is required",
+			Args: Args{
+				Requester: "alice",
+				Approvers: "bob,charlie",
+				Plan:      "",
+			},
+			ExpectStdout: "",
+			ExpectStderr: "plan is a required argument\nexit status 1",
+		},
+		{
 			Name: "Plan file needs to exist",
 			Args: Args{
 				Requester: "alice",
@@ -39,7 +48,7 @@ func TestE2E_Args(t *testing.T) {
 				Plan:      "testdata/nonexistent_plan.json",
 			},
 			ExpectStdout: "",
-			ExpectStderr: `open .*data/nonexistent_plan.json: no such file or directory\nexit status 1`,
+			ExpectStderr: "invalid plan JSON file\nexit status 1",
 		},
 		{
 			Name: "Plan file needs to be json",
@@ -49,7 +58,7 @@ func TestE2E_Args(t *testing.T) {
 				Plan:      "testdata/not_json.py",
 			},
 			ExpectStdout: "",
-			ExpectStderr: "Invalid plan JSON file",
+			ExpectStderr: "invalid plan JSON file\nexit status 1",
 		},
 	}
 
@@ -88,7 +97,14 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
+					newRequestError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
+					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -98,7 +114,14 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
+					newRequestError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
+					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -108,7 +131,10 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":true,"errors":\[\]}`,
+			ExpectStdout: Result{
+				Ok:     true,
+				Errors: []ResultError{},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -118,7 +144,14 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Approvers: "frank",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
+					newApproveError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
+					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -128,7 +161,14 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Approvers: "alice",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.bar\[2\]"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"},{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foobar"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
+					newApproveError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
+					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 	}
@@ -168,7 +208,12 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -178,7 +223,12 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"requesting user is not a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -188,7 +238,10 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Approvers: "bob,charlie",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":true,"errors":\[\]}`,
+			ExpectStdout: Result{
+				Ok:     true,
+				Errors: []ResultError{},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -198,7 +251,12 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Approvers: "frank",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 		{
@@ -208,7 +266,12 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Approvers: "alice",
 				Plan:      plan,
 			},
-			ExpectStdout: `{"ok":false,"errors":\[{"error":"approval is required from a member of the owner group","address":"aiven_kafka_topic.foo"}\]}`, //nolint:lll
+			ExpectStdout: Result{
+				Ok: false,
+				Errors: []ResultError{
+					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+				},
+			}.toJSON(),
 			ExpectStderr: "",
 		},
 	}
@@ -233,12 +296,18 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 }
 
 func runCommand(dir string, args Args) (string, string, error) {
-	cmdArgs := []string{
-		"run",
-		"main.go",
-		fmt.Sprintf("-requester=%s", args.Requester),
-		fmt.Sprintf("-approvers=%s", args.Approvers),
-		fmt.Sprintf("-plan=%s", filepath.Join(dir, args.Plan)),
+
+	cmdArgs := make([]string, 0)
+	cmdArgs = append(cmdArgs, "run")
+	cmdArgs = append(cmdArgs, "main.go")
+	if args.Requester != "" {
+		cmdArgs = append(cmdArgs, fmt.Sprintf("-requester=%s", args.Requester))
+	}
+	if args.Approvers != "" {
+		cmdArgs = append(cmdArgs, fmt.Sprintf("-approvers=%s", args.Approvers))
+	}
+	if args.Plan != "" {
+		cmdArgs = append(cmdArgs, fmt.Sprintf("-plan=%s", filepath.Join(dir, args.Plan)))
 	}
 
 	var stdoutBuffer, stderrBuffer strings.Builder
@@ -259,12 +328,8 @@ func assertOutput(t *testing.T, name, actual, expected string) {
 		return
 	}
 
-	matched, err := regexp.MatchString(expected, actual)
-	if err != nil {
-		t.Fatalf("Failed to compile regex: %v", err)
-	}
-	if !matched {
-		t.Errorf("Expected %s to match pattern: %q, but got: %q", name, expected, actual)
+	if actual != expected {
+		t.Errorf("Expected %s to equal: %q, but got: %q", name, expected, actual)
 	}
 }
 
@@ -388,7 +453,7 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 		user := StateResource{}
 		user.Values.InternalUserID = "u4e3706199a0"
 
-		ok := isUserGroupMemberFromState(topic, &user, plan)
+		ok := isUserGroupMemberFromState(&topic, &user, plan)
 		if !ok {
 			t.Fatal()
 		}
@@ -402,7 +467,7 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 		user := StateResource{}
 		user.Values.InternalUserID = "abc"
 
-		ok := isUserGroupMemberFromState(topic, &user, plan)
+		ok := isUserGroupMemberFromState(&topic, &user, plan)
 		if ok {
 			t.Fatal()
 		}
@@ -464,12 +529,13 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 
 func TestUnit_newRequestError(t *testing.T) {
 	t.Run("Return error about requesting", func(t *testing.T) {
-		adress := "aiven_kafka_topic.foo"
-		err := newRequestError(adress)
+		address := "aiven_kafka_topic.foo"
+		tags := make([]Tag, 0)
+		err := newRequestError(address, tags)
 		if err.Error != "requesting user is not a member of the owner group" {
 			t.Error()
 		}
-		if err.Address != adress {
+		if err.Address != address {
 			t.Error()
 		}
 	})
@@ -477,12 +543,13 @@ func TestUnit_newRequestError(t *testing.T) {
 
 func TestUnit_newApproveError(t *testing.T) {
 	t.Run("Return error about approving", func(t *testing.T) {
-		adress := "aiven_kafka_topic.foo"
-		err := newApproveError(adress)
+		address := "aiven_kafka_topic.foo"
+		tags := make([]Tag, 0)
+		err := newApproveError(address, tags)
 		if err.Error != "approval is required from a member of the owner group" {
 			t.Error()
 		}
-		if err.Address != adress {
+		if err.Address != address {
 			t.Error()
 		}
 	})

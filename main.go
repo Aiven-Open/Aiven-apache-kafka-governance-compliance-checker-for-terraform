@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -59,6 +58,7 @@ type StateResource struct {
 	Values  struct {
 		InternalUserID   string  `json:"internal_user_id"`
 		ExternalUserID   string  `json:"external_user_id"`
+		Tag              []Tag   `json:"tag"`
 		OwnerUserGroupID *string `json:"owner_user_group_id"`
 		GroupID          *string `json:"group_id"`
 		UserID           *string `json:"user_id"`
@@ -68,6 +68,7 @@ type StateResource struct {
 type ChangeResource struct {
 	InternalUserID   string  `json:"internal_user_id"`
 	ExternalUserID   string  `json:"external_user_id"`
+	Tag              []Tag   `json:"tag"`
 	OwnerUserGroupID *string `json:"owner_user_group_id"`
 	GroupID          *string `json:"group_id"`
 	UserID           *string `json:"user_id"`
@@ -81,9 +82,9 @@ type ResourceChange struct {
 }
 
 type Change struct {
-	Actions      []string       `json:"actions"`
-	Before       ChangeResource `json:"before"`
-	After        ChangeResource `json:"after"`
+	Actions      []string        `json:"actions"`
+	Before       *ChangeResource `json:"before"`
+	After        *ChangeResource `json:"after"`
 	AfterUnknown struct {
 		OwnerUserGroupID bool `json:"owner_user_group_id"`
 	} `json:"after_unknown"`
@@ -92,11 +93,22 @@ type Change struct {
 type ResultError struct {
 	Error   string `json:"error"`
 	Address string `json:"address"`
+	Tags    []Tag  `json:"tags"`
 }
 
 type Result struct {
 	Ok     bool          `json:"ok"`
 	Errors []ResultError `json:"errors"`
+}
+
+type Tag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (result Result) toJSON() string {
+	encoded, _ := json.Marshal(result)
+	return string(encoded)
 }
 
 const (
@@ -111,18 +123,20 @@ func main() {
 	approverIDs := flag.String("approvers", "", "comma separated list of users identified as the approvers of the change")
 	flag.Parse()
 
+	logger := log.New(os.Stderr, "", 0)
+
 	if *path == "" {
-		log.Fatal("Missing required arguments")
+		logger.Fatal("plan is a required argument")
 	}
 
 	content, readErr := os.ReadFile(*path)
 	if readErr != nil {
-		log.Fatal(readErr)
+		logger.Fatal("invalid plan JSON file")
 	}
 
 	var plan Plan
-	if unmarshalErr := json.Unmarshal(content, &plan); unmarshalErr != nil {
-		log.Fatal("Invalid plan JSON file")
+	if unmarshErr := json.Unmarshal(content, &plan); unmarshErr != nil {
+		logger.Fatal("invalid plan JSON file")
 	}
 
 	result := Result{Ok: true, Errors: []ResultError{}}
@@ -136,8 +150,8 @@ func main() {
 		}
 	}
 
-	output, _ := json.Marshal(result)
-	fmt.Println(string(output))
+	logger.SetOutput(os.Stdout)
+	logger.Println(result.toJSON())
 }
 
 func findExternalIdentity(userID string, plan *Plan) *StateResource {
@@ -184,34 +198,38 @@ func validateKafkaTopicChange(
 }
 
 func validateKafkaTopicOwnerFromState(
-	resourceAddress string,
-	topic ChangeResource,
+	address string,
+	topic *ChangeResource,
 	requester *StateResource,
 	approvers []*StateResource,
 	plan *Plan,
 	result *Result,
 ) {
+	if topic == nil {
+		return
+	}
 	if topic.OwnerUserGroupID == nil {
+		return
+	}
+	if *topic.OwnerUserGroupID == "" {
 		return
 	}
 	if requester == nil {
 		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(resourceAddress))
+		result.Errors = append(result.Errors, newRequestError(address, topic.Tag))
 		return
 	}
-
 	if !isUserGroupMemberFromState(topic, requester, plan) {
 		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(resourceAddress))
+		result.Errors = append(result.Errors, newRequestError(address, topic.Tag))
 	}
-
 	for _, approver := range approvers {
 		if isUserGroupMemberFromState(topic, approver, plan) {
 			return
 		}
 	}
 	result.Ok = false
-	result.Errors = append(result.Errors, newApproveError(resourceAddress))
+	result.Errors = append(result.Errors, newApproveError(address, topic.Tag))
 }
 
 func validateKafkaTopicOwnerFromConfig(
@@ -223,7 +241,7 @@ func validateKafkaTopicOwnerFromConfig(
 ) {
 	if !isUserGroupMemberFromConfig(resourceChange, requester, plan) {
 		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(resourceChange.Address))
+		result.Errors = append(result.Errors, newRequestError(resourceChange.Address, resourceChange.Change.After.Tag))
 	}
 	for _, approver := range approvers {
 		if isUserGroupMemberFromConfig(resourceChange, approver, plan) {
@@ -231,29 +249,31 @@ func validateKafkaTopicOwnerFromConfig(
 		}
 	}
 	result.Ok = false
-	result.Errors = append(result.Errors, newApproveError(resourceChange.Address))
-
+	result.Errors = append(result.Errors, newApproveError(resourceChange.Address, resourceChange.Change.After.Tag))
 }
 
-func findOwnerAddressFromConfig(resourceAddress string, plan *Plan) *string {
+func findOwnerAddressFromConfig(address string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
-		if resource.Address == resourceAddress {
+		if resource.Address == address {
 			return &resource.Expressions.OwnerUserGroupID.References[1]
 		}
 	}
 	return nil
 }
 
-func findUserAddressFromConfig(resourceAddress string, plan *Plan) *string {
+func findUserAddressFromConfig(address string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
-		if resource.Address == resourceAddress {
+		if resource.Address == address {
 			return &resource.Expressions.InternalUserID.References[1]
 		}
 	}
 	return nil
 }
 
-func isUserGroupMemberFromState(topic ChangeResource, user *StateResource, plan *Plan) bool {
+func isUserGroupMemberFromState(topic *ChangeResource, user *StateResource, plan *Plan) bool {
+	if topic == nil {
+		return false
+	}
 	for _, resource := range plan.State.Values.RootModule.Resources {
 		if resource.Type == AivenOrganizationUserGroupMember {
 			if *resource.Values.GroupID == *topic.OwnerUserGroupID && *resource.Values.UserID == user.Values.InternalUserID {
@@ -287,16 +307,18 @@ func isUserGroupMemberFromConfig(resourceChange ResourceChange, user *StateResou
 	return false
 }
 
-func newRequestError(resourceAddress string) ResultError {
+func newRequestError(address string, tag []Tag) ResultError {
 	return ResultError{
 		Error:   "requesting user is not a member of the owner group",
-		Address: resourceAddress,
+		Address: address,
+		Tags:    tag,
 	}
 }
 
-func newApproveError(resourceAddress string) ResultError {
+func newApproveError(address string, tag []Tag) ResultError {
 	return ResultError{
 		Error:   "approval is required from a member of the owner group",
-		Address: resourceAddress,
+		Address: address,
+		Tags:    tag,
 	}
 }
