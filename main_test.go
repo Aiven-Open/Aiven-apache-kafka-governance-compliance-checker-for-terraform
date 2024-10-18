@@ -101,7 +101,6 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newRequestError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
 					newRequestError("aiven_kafka_topic.foo", []Tag{}),
 				},
 			}.toJSON(),
@@ -118,7 +117,6 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newRequestError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
 					newRequestError("aiven_kafka_topic.foo", []Tag{}),
 				},
 			}.toJSON(),
@@ -148,7 +146,6 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newApproveError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
 					newApproveError("aiven_kafka_topic.foo", []Tag{}),
 				},
 			}.toJSON(),
@@ -165,7 +162,6 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newApproveError("aiven_kafka_topic.foo", []Tag{{Key: "a", Value: "b"}}),
 					newApproveError("aiven_kafka_topic.foo", []Tag{}),
 				},
 			}.toJSON(),
@@ -299,7 +295,7 @@ func runCommand(dir string, args Args) (string, string, error) {
 
 	cmdArgs := make([]string, 0)
 	cmdArgs = append(cmdArgs, "run")
-	cmdArgs = append(cmdArgs, "main.go")
+	cmdArgs = append(cmdArgs, "./...")
 	if args.Requester != "" {
 		cmdArgs = append(cmdArgs, fmt.Sprintf("-requester=%s", args.Requester))
 	}
@@ -453,7 +449,7 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 		user := StateResource{}
 		user.Values.InternalUserID = "u4e3706199a0"
 
-		ok := isUserGroupMemberFromState(&topic, &user, plan)
+		ok := isUserGroupMemberInState(&topic, &user, plan)
 		if !ok {
 			t.Fatal()
 		}
@@ -467,7 +463,7 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 		user := StateResource{}
 		user.Values.InternalUserID = "abc"
 
-		ok := isUserGroupMemberFromState(&topic, &user, plan)
+		ok := isUserGroupMemberInState(&topic, &user, plan)
 		if ok {
 			t.Fatal()
 		}
@@ -484,7 +480,7 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 		user := StateResource{}
 		user.Address = "data.aiven_external_identity.alice"
 
-		ok := isUserGroupMemberFromConfig(topic, &user, plan)
+		ok := isUserGroupMemberInConfig(topic, &user, plan)
 		if !ok {
 			t.Fatal()
 		}
@@ -497,7 +493,7 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 		user := StateResource{}
 		user.Address = "data.aiven_external_identity.frank"
 
-		ok := isUserGroupMemberFromConfig(topic, &user, plan)
+		ok := isUserGroupMemberInConfig(topic, &user, plan)
 		if ok {
 			t.Fatal()
 		}
@@ -510,7 +506,7 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 		user := StateResource{}
 		user.Address = "data.aiven_external_identity.frank"
 
-		ok := isUserGroupMemberFromConfig(topic, &user, plan)
+		ok := isUserGroupMemberInConfig(topic, &user, plan)
 		if ok {
 			t.Fatal()
 		}
@@ -520,7 +516,7 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 		topic := ResourceChange{}
 		topic.Address = "aiven_kafka_topic.foo"
 
-		ok := isUserGroupMemberFromConfig(topic, nil, plan)
+		ok := isUserGroupMemberInConfig(topic, nil, plan)
 		if ok {
 			t.Fatal()
 		}

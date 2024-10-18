@@ -10,6 +10,7 @@ linters-settings:
     check-type-assertions: true
 
   exhaustive:
+    default-signifies-exhaustive: true
     check:
       - switch
       - map
