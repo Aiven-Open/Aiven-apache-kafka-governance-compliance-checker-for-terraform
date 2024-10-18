@@ -5,7 +5,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"slices"
 	"strings"
 )
 
@@ -74,6 +73,8 @@ type ChangeResource struct {
 	UserID           *string `json:"user_id"`
 }
 
+// Represents a single change in the plan (resource_changes array)
+// including the resource type, name, address and the change itself
 type ResourceChange struct {
 	Type    ResourceType `json:"type"`
 	Name    string       `json:"name"`
@@ -81,6 +82,8 @@ type ResourceChange struct {
 	Change  Change       `json:"change"`
 }
 
+// Actual change of a resource
+// including the actions (create, update, delete), the resource before and after the change
 type Change struct {
 	Actions      []string        `json:"actions"`
 	Before       *ChangeResource `json:"before"`
@@ -96,19 +99,9 @@ type ResultError struct {
 	Tags    []Tag  `json:"tags"`
 }
 
-type Result struct {
-	Ok     bool          `json:"ok"`
-	Errors []ResultError `json:"errors"`
-}
-
 type Tag struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
-}
-
-func (result Result) toJSON() string {
-	encoded, _ := json.Marshal(result)
-	return string(encoded)
 }
 
 const (
@@ -145,13 +138,35 @@ func main() {
 	approvers := findApprovers(strings.Split(*approverIDs, ","), *requesterID, &plan)
 
 	for _, resourceChange := range plan.Changes {
-		if resourceChange.Type == AivenKafkaTopic {
-			validateKafkaTopicChange(resourceChange, requester, approvers, &plan, &result)
-		}
+		errors := validateResourceChange(resourceChange, requester, approvers, &plan)
+		result.Errors = append(result.Errors, errors...)
+	}
+
+	// result.Ok is the source of truth for the result of the validation
+	if len(result.Errors) > 0 {
+		result.Ok = false
 	}
 
 	logger.SetOutput(os.Stdout)
 	logger.Println(result.toJSON())
+}
+
+func validateResourceChange(
+	resourceChange ResourceChange,
+	requester *StateResource,
+	approvers []*StateResource,
+	plan *Plan,
+) []ResultError {
+	var validator Validator
+	switch resourceChange.Type {
+	case AivenKafkaTopic:
+		validator = TopicValidator{}
+	default:
+		return []ResultError{}
+	}
+
+	return validator.ValidateResourceChange(resourceChange, requester, approvers, plan)
+
 }
 
 func findExternalIdentity(userID string, plan *Plan) *StateResource {
@@ -174,84 +189,7 @@ func findApprovers(approverIDs []string, requesterID string, plan *Plan) []*Stat
 	return approvers
 }
 
-func validateKafkaTopicChange(
-	topic ResourceChange,
-	requester *StateResource,
-	approvers []*StateResource,
-	plan *Plan,
-	result *Result,
-) {
-	if topic.Change.AfterUnknown.OwnerUserGroupID {
-		validateKafkaTopicOwnerFromConfig(topic, requester, approvers, plan, result)
-		return
-	}
-	if slices.Contains(topic.Change.Actions, "create") {
-		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.After, requester, approvers, plan, result)
-	}
-	if slices.Contains(topic.Change.Actions, "update") {
-		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.Before, requester, approvers, plan, result)
-		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.After, requester, approvers, plan, result)
-	}
-	if slices.Contains(topic.Change.Actions, "delete") {
-		validateKafkaTopicOwnerFromState(topic.Address, topic.Change.Before, requester, approvers, plan, result)
-	}
-}
-
-func validateKafkaTopicOwnerFromState(
-	address string,
-	topic *ChangeResource,
-	requester *StateResource,
-	approvers []*StateResource,
-	plan *Plan,
-	result *Result,
-) {
-	if topic == nil {
-		return
-	}
-	if topic.OwnerUserGroupID == nil {
-		return
-	}
-	if *topic.OwnerUserGroupID == "" {
-		return
-	}
-	if requester == nil {
-		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(address, topic.Tag))
-		return
-	}
-	if !isUserGroupMemberFromState(topic, requester, plan) {
-		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(address, topic.Tag))
-	}
-	for _, approver := range approvers {
-		if isUserGroupMemberFromState(topic, approver, plan) {
-			return
-		}
-	}
-	result.Ok = false
-	result.Errors = append(result.Errors, newApproveError(address, topic.Tag))
-}
-
-func validateKafkaTopicOwnerFromConfig(
-	resourceChange ResourceChange,
-	requester *StateResource,
-	approvers []*StateResource,
-	plan *Plan,
-	result *Result,
-) {
-	if !isUserGroupMemberFromConfig(resourceChange, requester, plan) {
-		result.Ok = false
-		result.Errors = append(result.Errors, newRequestError(resourceChange.Address, resourceChange.Change.After.Tag))
-	}
-	for _, approver := range approvers {
-		if isUserGroupMemberFromConfig(resourceChange, approver, plan) {
-			return
-		}
-	}
-	result.Ok = false
-	result.Errors = append(result.Errors, newApproveError(resourceChange.Address, resourceChange.Change.After.Tag))
-}
-
+// Find the owner address from the proposed / planned Terraform configuration
 func findOwnerAddressFromConfig(address string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Address == address {
@@ -261,6 +199,7 @@ func findOwnerAddressFromConfig(address string, plan *Plan) *string {
 	return nil
 }
 
+// Find the user address from the proposed / planned Terraform configuration
 func findUserAddressFromConfig(address string, plan *Plan) *string {
 	for _, resource := range plan.Configuration.RootModule.Resources {
 		if resource.Address == address {
@@ -270,21 +209,8 @@ func findUserAddressFromConfig(address string, plan *Plan) *string {
 	return nil
 }
 
-func isUserGroupMemberFromState(topic *ChangeResource, user *StateResource, plan *Plan) bool {
-	if topic == nil {
-		return false
-	}
-	for _, resource := range plan.State.Values.RootModule.Resources {
-		if resource.Type == AivenOrganizationUserGroupMember {
-			if *resource.Values.GroupID == *topic.OwnerUserGroupID && *resource.Values.UserID == user.Values.InternalUserID {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func isUserGroupMemberFromConfig(resourceChange ResourceChange, user *StateResource, plan *Plan) bool {
+// Check if the user is a member of the owner group in the proposed / planned Terraform configuration
+func isUserGroupMemberInConfig(resourceChange ResourceChange, user *StateResource, plan *Plan) bool {
 	ownerAddress := findOwnerAddressFromConfig(resourceChange.Address, plan)
 	if user == nil || ownerAddress == nil {
 		return false
@@ -300,6 +226,22 @@ func isUserGroupMemberFromConfig(resourceChange ResourceChange, user *StateResou
 			groupReference := resource.Expressions.GroupID.References[1]
 			userReference := resource.Expressions.UserID.References[1]
 			if groupReference == *ownerAddress && userReference == *userAddress {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// Check if the user is a member of the owner group in the current Terraform state
+func isUserGroupMemberInState(resourceWithOwner *ChangeResource, user *StateResource, plan *Plan) bool {
+	if resourceWithOwner == nil {
+		return false
+	}
+	for _, resource := range plan.State.Values.RootModule.Resources {
+		if resource.Type == AivenOrganizationUserGroupMember {
+			if *resource.Values.GroupID == *resourceWithOwner.OwnerUserGroupID &&
+				*resource.Values.UserID == user.Values.InternalUserID {
 				return true
 			}
 		}
