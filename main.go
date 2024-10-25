@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"maps"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -57,7 +59,7 @@ type StateResource struct {
 	Values  struct {
 		InternalUserID   string  `json:"internal_user_id"`
 		ExternalUserID   string  `json:"external_user_id"`
-		Tag              []Tag   `json:"tag"`
+		Tag              []Tag   `json:"tag"` // if supported by the resource
 		OwnerUserGroupID *string `json:"owner_user_group_id"`
 		GroupID          *string `json:"group_id"`
 		UserID           *string `json:"user_id"`
@@ -110,6 +112,19 @@ const (
 	AivenOrganizationUserGroupMember ResourceType = "aiven_organization_user_group_member"
 )
 
+type Check func(ResourceChange, *StateResource, []*StateResource, *Plan) CheckResult
+
+type ResourceErrorKey struct {
+	resource string
+	error    string
+}
+
+var checks = map[ResourceType][]Check{
+	AivenKafkaTopic:                  {changeIsRequestedByOwner, changeIsApprovedByOwner},
+	AivenExternalIdentity:            {},
+	AivenOrganizationUserGroupMember: {},
+}
+
 func main() {
 	path := flag.String("plan", "", "path to a file with terraform plan output in json format")
 	requesterID := flag.String("requester", "", "user identified as the requester of the change")
@@ -157,18 +172,35 @@ func validateResourceChange(
 	approvers []*StateResource,
 	plan *Plan,
 ) []ResultError {
-	var validator Validator
-	switch resourceChange.Type {
-	case AivenKafkaTopic:
-		validator = TopicValidator{}
-	default:
+
+	resourceChecks, ok := checks[resourceChange.Type]
+	if !ok {
+		// no checks for this resource type
 		return []ResultError{}
 	}
 
-	return validator.ValidateResourceChange(resourceChange, requester, approvers, plan)
+	var checkErrors = make([]ResultError, 0)
+
+	//  run the checks and collect errors
+	for _, check := range resourceChecks {
+		singleCheckResult := check(resourceChange, requester, approvers, plan)
+		if !singleCheckResult.ok {
+			checkErrors = append(checkErrors, singleCheckResult.errors...)
+		}
+	}
+
+	// Remove duplicate errors
+	errorMap := make(map[ResourceErrorKey]ResultError)
+	for _, err := range checkErrors {
+		errorMap[ResourceErrorKey{resource: resourceChange.Name, error: err.Error}] = err
+	}
+
+	// Convert the map back into a slice
+	return slices.Collect(maps.Values(errorMap))
 
 }
 
+// Finds external identity resource for a given user ID from the current (prior) state
 func findExternalIdentity(userID string, plan *Plan) *StateResource {
 	for _, resource := range plan.State.Values.RootModule.Resources {
 		if resource.Type == AivenExternalIdentity && userID == resource.Values.ExternalUserID {
@@ -182,6 +214,7 @@ func findApprovers(approverIDs []string, requesterID string, plan *Plan) []*Stat
 	var approvers []*StateResource
 	for _, approverID := range approverIDs {
 		approver := findExternalIdentity(approverID, plan)
+		// requester can't approve their own request
 		if approver != nil && requesterID != approverID {
 			approvers = append(approvers, approver)
 		}
@@ -247,20 +280,4 @@ func isUserGroupMemberInState(resourceWithOwner *ChangeResource, user *StateReso
 		}
 	}
 	return false
-}
-
-func newRequestError(address string, tag []Tag) ResultError {
-	return ResultError{
-		Error:   "requesting user is not a member of the owner group",
-		Address: address,
-		Tags:    tag,
-	}
-}
-
-func newApproveError(address string, tag []Tag) ResultError {
-	return ResultError{
-		Error:   "approval is required from a member of the owner group",
-		Address: address,
-		Tags:    tag,
-	}
 }
