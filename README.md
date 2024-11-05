@@ -1,6 +1,5 @@
 ![test](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/test.yml/badge.svg)
 ![lint](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/lint.yml/badge.svg)
-![codeql](https://github.com/aiven/aiven-terraform-governance-compliance-checker/actions/workflows/codeql.yml/badge.svg)
 
 ## Overview
 This GitHub Action can be used to perform governing checks on terraform aiven provider resources for the terraform generated plan. 
@@ -13,11 +12,15 @@ Example report:
   "errors": [
     {
       "error": "requesting user is not a member of the owner group",
-      "address": "aiven_kafka_topic.foo"
+      "address": "aiven_kafka_topic.foo",
+      "tags": [
+        { "key": "test", "value": "test" }
+      ],
     },
     {
       "error": "approval required from a member of the owner group",
-      "address": "aiven_kafka_topic.foo"
+      "address": "aiven_kafka_topic.foo",
+      "tags": []
     }
   ] 
 }
