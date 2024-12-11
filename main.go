@@ -1,13 +1,12 @@
 package main
 
 import (
+	"aiven/terraform/governance/compliance/checker/internal/input"
 	"encoding/json"
-	"flag"
 	"log"
 	"maps"
 	"os"
 	"slices"
-	"strings"
 )
 
 type ResourceType string
@@ -126,18 +125,14 @@ var checks = map[ResourceType][]Check{
 }
 
 func main() {
-	path := flag.String("plan", "", "path to a file with terraform plan output in json format")
-	requesterID := flag.String("requester", "", "user identified as the requester of the change")
-	approverIDs := flag.String("approvers", "", "comma separated list of users identified as the approvers of the change")
-	flag.Parse()
-
 	logger := log.New(os.Stderr, "", 0)
 
-	if *path == "" {
-		logger.Fatal("plan is a required argument")
+	args, inputErr := input.NewInput(os.Args[1:])
+	if inputErr != nil {
+		logger.Fatal(inputErr)
 	}
 
-	content, readErr := os.ReadFile(*path)
+	content, readErr := os.ReadFile(args.Plan)
 	if readErr != nil {
 		logger.Fatal("invalid plan JSON file")
 	}
@@ -149,8 +144,8 @@ func main() {
 
 	result := Result{Ok: true, Errors: []ResultError{}}
 
-	requester := findExternalIdentity(*requesterID, &plan)
-	approvers := findApprovers(strings.Split(*approverIDs, ","), *requesterID, &plan)
+	requester := findExternalIdentity(args.Requester, &plan)
+	approvers := findApprovers(args.Approvers, args.Requester, &plan)
 
 	for _, resourceChange := range plan.Changes {
 		errors := validateResourceChange(resourceChange, requester, approvers, &plan)
