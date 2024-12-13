@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aiven/terraform/governance/compliance/checker/internal/terraform"
 	"testing"
 )
 
@@ -25,7 +26,7 @@ func TestResultToJSON(t *testing.T) {
 				Errors: []ResultError{
 					{Error: "Error 1"},
 					{Error: "Error 2", Address: "Address 2"},
-					{Error: "Error 3", Address: "Address 3", Tags: []Tag{{Key: "Key 1", Value: "Value 1"}}},
+					{Error: "Error 3", Address: "Address 3", Tags: []terraform.Tag{{Key: "Key 1", Value: "Value 1"}}},
 				},
 			},
 			//nolint: lll

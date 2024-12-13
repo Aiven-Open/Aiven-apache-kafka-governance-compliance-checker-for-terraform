@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aiven/terraform/governance/compliance/checker/internal/terraform"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -100,8 +101,8 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+					newRequestError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
+					newRequestError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -116,8 +117,8 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newRequestError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+					newRequestError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
+					newRequestError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -145,8 +146,8 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
+					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -161,8 +162,8 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newApproveError("aiven_kafka_topic.bar[2]", []Tag{}),
-					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
+					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -207,7 +208,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+					newRequestError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -222,7 +223,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newRequestError("aiven_kafka_topic.foo", []Tag{}),
+					newRequestError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -250,7 +251,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -265,7 +266,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
-					newApproveError("aiven_kafka_topic.foo", []Tag{}),
+					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
 			ExpectStderr: "",
@@ -329,13 +330,13 @@ func assertOutput(t *testing.T, name, actual, expected string) {
 	}
 }
 
-func getTestPlan(t *testing.T, path string) *Plan {
+func getTestPlan(t *testing.T, path string) *terraform.Plan {
 	content, readErr := os.ReadFile(path)
 	if readErr != nil {
 		t.Fatal(readErr)
 	}
 
-	var plan Plan
+	var plan terraform.Plan
 	if unmarshalErr := json.Unmarshal(content, &plan); unmarshalErr != nil {
 		t.Fatal("Invalid plan JSON file")
 	}
@@ -442,11 +443,11 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 	plan := getTestPlan(t, "testdata/plan_with_known_owner_user_group_id.json")
 
 	t.Run("Return true if exists", func(t *testing.T) {
-		topic := ChangeResource{}
+		topic := terraform.ResourceChangeValues{}
 		ownerUserGroupID := "ug4e3b20cee48"
 		topic.OwnerUserGroupID = &ownerUserGroupID
 
-		user := StateResource{}
+		user := terraform.PriorStateResource{}
 		user.Values.InternalUserID = "u4e3706199a0"
 
 		ok := isUserGroupMemberInState(&topic, &user, plan)
@@ -456,11 +457,11 @@ func TestUnit_isUserGroupMemberFromState(t *testing.T) {
 	})
 
 	t.Run("Return false if not found", func(t *testing.T) {
-		topic := ChangeResource{}
+		topic := terraform.ResourceChangeValues{}
 		ownerUserGroupID := "ug4e3b20cee48"
 		topic.OwnerUserGroupID = &ownerUserGroupID
 
-		user := StateResource{}
+		user := terraform.PriorStateResource{}
 		user.Values.InternalUserID = "abc"
 
 		ok := isUserGroupMemberInState(&topic, &user, plan)
@@ -474,10 +475,10 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 	plan := getTestPlan(t, "testdata/plan_with_unknown_owner_user_group_id.json")
 
 	t.Run("Return true if exists", func(t *testing.T) {
-		topic := ResourceChange{}
+		topic := terraform.ResourceChange{}
 		topic.Address = "aiven_kafka_topic.foo"
 
-		user := StateResource{}
+		user := terraform.PriorStateResource{}
 		user.Address = "data.aiven_external_identity.alice"
 
 		ok := isUserGroupMemberInConfig(topic, &user, plan)
@@ -487,10 +488,10 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 	})
 
 	t.Run("Return false if not found", func(t *testing.T) {
-		topic := ResourceChange{}
+		topic := terraform.ResourceChange{}
 		topic.Address = "aiven_kafka_topic.foo"
 
-		user := StateResource{}
+		user := terraform.PriorStateResource{}
 		user.Address = "data.aiven_external_identity.frank"
 
 		ok := isUserGroupMemberInConfig(topic, &user, plan)
@@ -500,10 +501,10 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 	})
 
 	t.Run("Return false if owner address not found", func(t *testing.T) {
-		topic := ResourceChange{}
+		topic := terraform.ResourceChange{}
 		topic.Address = "aiven_kafka_topic.magic"
 
-		user := StateResource{}
+		user := terraform.PriorStateResource{}
 		user.Address = "data.aiven_external_identity.frank"
 
 		ok := isUserGroupMemberInConfig(topic, &user, plan)
@@ -513,7 +514,7 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 	})
 
 	t.Run("Return false if user is nil", func(t *testing.T) {
-		topic := ResourceChange{}
+		topic := terraform.ResourceChange{}
 		topic.Address = "aiven_kafka_topic.foo"
 
 		ok := isUserGroupMemberInConfig(topic, nil, plan)
@@ -526,8 +527,8 @@ func TestUnit_isUserGroupMemberFromConfig(t *testing.T) {
 func TestUnit_newRequestError(t *testing.T) {
 	t.Run("Return error about requesting", func(t *testing.T) {
 		address := "aiven_kafka_topic.foo"
-		tags := make([]Tag, 0)
-		err := newRequestError(address, tags)
+		tags := make([]terraform.Tag, 0)
+		err := newRequestError(address, &tags)
 		if err.Error != "requesting user is not a member of the owner group" {
 			t.Error()
 		}
@@ -540,8 +541,8 @@ func TestUnit_newRequestError(t *testing.T) {
 func TestUnit_newApproveError(t *testing.T) {
 	t.Run("Return error about approving", func(t *testing.T) {
 		address := "aiven_kafka_topic.foo"
-		tags := make([]Tag, 0)
-		err := newApproveError(address, tags)
+		tags := make([]terraform.Tag, 0)
+		err := newApproveError(address, &tags)
 		if err.Error != "approval is required from a member of the owner group" {
 			t.Error()
 		}
