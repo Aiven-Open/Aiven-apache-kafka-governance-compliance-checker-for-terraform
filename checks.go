@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aiven/terraform/governance/compliance/checker/internal/terraform"
 	"slices"
 )
 
@@ -10,15 +11,15 @@ type CheckResult struct {
 }
 
 func changeIsRequestedByOwner(
-	resourceChange ResourceChange,
-	requester *StateResource,
-	_ []*StateResource,
-	plan *Plan,
+	resourceChange terraform.ResourceChange,
+	requester *terraform.PriorStateResource,
+	_ []*terraform.PriorStateResource,
+	plan *terraform.Plan,
 ) CheckResult {
 	checkResult := CheckResult{ok: true, errors: []ResultError{}}
 
 	// If the owner is defined but it's a new group it's in the state post-apply so we have to use config to check it
-	if resourceChange.Change.AfterUnknown.OwnerUserGroupID {
+	if ownerAfterApply := resourceChange.Change.AfterUnknown.OwnerUserGroupID; ownerAfterApply != nil && *ownerAfterApply {
 		if !isUserGroupMemberInConfig(resourceChange, requester, plan) {
 			checkResult.ok = false
 			checkResult.errors = append(checkResult.errors,
@@ -31,19 +32,19 @@ func changeIsRequestedByOwner(
 	}
 
 	// When the resource is created, the requester must be a member of the owner group after the change
-	if slices.Contains(resourceChange.Change.Actions, "create") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.CreateAction) {
 		checkResult.errors = append(checkResult.errors,
 			validateRequesterFromState(resourceChange.Address, resourceChange.Change.After, requester, plan)...)
 	}
 	// When the resource is updated, the requester must be a member of the owner group before and after the change
-	if slices.Contains(resourceChange.Change.Actions, "update") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.UpdateAction) {
 		checkResult.errors = append(checkResult.errors,
 			validateRequesterFromState(resourceChange.Address, resourceChange.Change.Before, requester, plan)...)
 		checkResult.errors = append(checkResult.errors,
 			validateRequesterFromState(resourceChange.Address, resourceChange.Change.After, requester, plan)...)
 	}
 	// When the resource is deleted, the requester must be a member of the owner group before the change
-	if slices.Contains(resourceChange.Change.Actions, "delete") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.DeleteAction) {
 		checkResult.errors = append(checkResult.errors,
 			validateRequesterFromState(resourceChange.Address, resourceChange.Change.Before, requester, plan)...)
 	}
@@ -55,15 +56,15 @@ func changeIsRequestedByOwner(
 }
 
 func changeIsApprovedByOwner(
-	resourceChange ResourceChange,
-	_ *StateResource,
-	approvers []*StateResource,
-	plan *Plan,
+	resourceChange terraform.ResourceChange,
+	_ *terraform.PriorStateResource,
+	approvers []*terraform.PriorStateResource,
+	plan *terraform.Plan,
 ) CheckResult {
 	checkResult := CheckResult{ok: true, errors: []ResultError{}}
 
 	// If the owner is defined but it's a new group it's in the state post-apply so we have to use config to check it
-	if resourceChange.Change.AfterUnknown.OwnerUserGroupID {
+	if ownerAfterApply := resourceChange.Change.AfterUnknown.OwnerUserGroupID; ownerAfterApply != nil && *ownerAfterApply {
 		foundApprover := false
 		for _, approver := range approvers {
 			if isUserGroupMemberInConfig(resourceChange, approver, plan) {
@@ -83,14 +84,14 @@ func changeIsApprovedByOwner(
 	}
 
 	// When the resource is created, the approvers must be a member of the owner group after the change
-	if slices.Contains(resourceChange.Change.Actions, "create") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.CreateAction) {
 		checkResult.errors = append(
 			checkResult.errors,
 			validateApproversFromState(resourceChange.Address, resourceChange.Change.After, approvers, plan)...,
 		)
 	}
 
-	if slices.Contains(resourceChange.Change.Actions, "update") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.UpdateAction) {
 		// updating owner requires approvals from both old and the new owner
 		// in other cases checking Change.After would be redundant
 		checkResult.errors = append(
@@ -104,7 +105,7 @@ func changeIsApprovedByOwner(
 	}
 
 	// When the resource is deleted, the approvers must be a member of the owner group before the change
-	if slices.Contains(resourceChange.Change.Actions, "delete") {
+	if slices.Contains(resourceChange.Change.Actions, terraform.DeleteAction) {
 		checkResult.errors = append(
 			checkResult.errors,
 			validateApproversFromState(resourceChange.Address, resourceChange.Change.Before, approvers, plan)...,
@@ -119,9 +120,9 @@ func changeIsApprovedByOwner(
 
 func validateApproversFromState(
 	address string,
-	resource *ChangeResource,
-	approvers []*StateResource,
-	plan *Plan,
+	resource *terraform.ResourceChangeValues,
+	approvers []*terraform.PriorStateResource,
+	plan *terraform.Plan,
 ) []ResultError {
 	resultErrors := []ResultError{}
 
@@ -151,9 +152,9 @@ func validateApproversFromState(
 
 func validateRequesterFromState(
 	address string,
-	resource *ChangeResource,
-	requester *StateResource,
-	plan *Plan,
+	resource *terraform.ResourceChangeValues,
+	requester *terraform.PriorStateResource,
+	plan *terraform.Plan,
 ) []ResultError {
 	resultErrors := []ResultError{}
 
@@ -178,18 +179,34 @@ func validateRequesterFromState(
 	return resultErrors
 }
 
-func newRequestError(address string, tag []Tag) ResultError {
+func newRequestError(address string, tag *[]terraform.Tag) ResultError {
+	err := "requesting user is not a member of the owner group"
+	if tag != nil {
+		return ResultError{
+			Error:   err,
+			Address: address,
+			Tags:    *tag,
+		}
+	}
 	return ResultError{
-		Error:   "requesting user is not a member of the owner group",
+		Error:   err,
 		Address: address,
-		Tags:    tag,
+		Tags:    []terraform.Tag{},
 	}
 }
 
-func newApproveError(address string, tag []Tag) ResultError {
+func newApproveError(address string, tag *[]terraform.Tag) ResultError {
+	err := "approval is required from a member of the owner group"
+	if tag != nil {
+		return ResultError{
+			Error:   err,
+			Address: address,
+			Tags:    *tag,
+		}
+	}
 	return ResultError{
-		Error:   "approval is required from a member of the owner group",
+		Error:   err,
 		Address: address,
-		Tags:    tag,
+		Tags:    []terraform.Tag{},
 	}
 }
