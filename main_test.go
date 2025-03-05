@@ -146,6 +146,10 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
+					{
+						Address: "aiven_governance_subscription.foo",
+						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
+					},
 					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
@@ -162,6 +166,10 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
+					{
+						Address: "aiven_governance_subscription.foo",
+						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
+					},
 					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
@@ -251,6 +259,10 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
+					{
+						Address: "aiven_governance_subscription.foo",
+						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
+					},
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
@@ -266,6 +278,10 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 			ExpectStdout: Result{
 				Ok: false,
 				Errors: []ResultError{
+					{
+						Address: "aiven_governance_subscription.foo",
+						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
+					},
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
 				},
 			}.toJSON(),
