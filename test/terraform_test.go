@@ -29,4 +29,16 @@ func TestTerraform_NewPlan(t *testing.T) {
 		assert.Equal(t, err.Error(), "invalid plan JSON file")
 	})
 
+    t.Run("Is able to consume a test plan with a subscription", func(t *testing.T) {
+               plan, err := terraform.NewPlan("../testdata/plan_with_subscription.json")
+               assert.NotNil(t, plan)
+               assert.Nil(t, err)
+       })
+
+    t.Run("Is able to consume a test plan without a subscription", func(t *testing.T) {
+            plan, err := terraform.NewPlan("../testdata/plan_without_subscription.json")
+            assert.NotNil(t, plan)
+            assert.Nil(t, err)
+        })
+
 }
