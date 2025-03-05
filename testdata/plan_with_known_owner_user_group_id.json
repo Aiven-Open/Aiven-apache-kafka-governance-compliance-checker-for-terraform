@@ -705,6 +705,29 @@
   ],
   "resource_changes": [
     {
+      "address": "aiven_governance_subscription.foo",
+      "type": "aiven_governance_subscription",
+      "name": "foo",
+      "provider_name": "registry.terraform.io/aiven/aiven",
+      "schema_version": 0,
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "owner_user_group_id": "ug4e3b20cee48",
+          "subscription_data": [{
+            "project": "testproject-hpo9",
+            "service_name": "kafka1",
+            "acls": [
+              {
+                "resource_name": "topic"
+              }
+            ]
+          }]
+        }
+      },
+      "sensitive_values": {}
+    },
+    {
       "address": "aiven_kafka.foo",
       "mode": "managed",
       "type": "aiven_kafka",

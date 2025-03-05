@@ -2,6 +2,7 @@ package main
 
 import (
 	"aiven/terraform/governance/compliance/checker/internal/terraform"
+	"fmt"
 	"slices"
 )
 
@@ -116,6 +117,123 @@ func changeIsApprovedByOwner(
 		checkResult.ok = false
 	}
 	return checkResult
+}
+
+func isSubscriptionResource(
+	subscriptionData terraform.SubscriptionData,
+	acl terraform.SubscriptionACL,
+	resource terraform.ResourceChange,
+) bool {
+	if resource.Type != terraform.AivenKafkaTopic {
+		return false
+	}
+
+	if resource.Change.After == nil {
+		return false
+	}
+
+	after := *resource.Change.After
+	if after.Project != nil && *after.Project != subscriptionData.Project {
+		return false
+	}
+
+	if after.ServiceName != nil && *after.ServiceName != subscriptionData.ServiceName {
+		return false
+	}
+
+	if after.TopicName != nil && *after.TopicName != acl.ResourceName {
+		return false
+	}
+
+	return true
+}
+
+func getSubscriptionResources(
+	resourceChange terraform.ResourceChange,
+	plan *terraform.Plan,
+) []terraform.ResourceChange {
+	resources := []terraform.ResourceChange{}
+
+	var subscriptionData terraform.SubscriptionData
+	if resourceChange.Change.After.SubscriptionData != nil {
+		subscriptionData = (*resourceChange.Change.After.SubscriptionData)[0]
+	}
+
+	for _, acl := range subscriptionData.Acls {
+		for _, resource := range plan.ResourceChanges {
+			if isSubscriptionResource(subscriptionData, acl, resource) {
+				resources = append(resources, resource)
+			}
+		}
+	}
+	return resources
+}
+
+func governanceSubscriptionCreateCheck(
+	resourceChange terraform.ResourceChange,
+	approvers []*terraform.PriorStateResource,
+	plan *terraform.Plan,
+) CheckResult {
+
+	checkResult := CheckResult{ok: true, errors: []ResultError{}}
+
+	// Check each subscription resource
+resources:
+	for _, resource := range getSubscriptionResources(resourceChange, plan) {
+		ownerUnknown := resource.Change.AfterUnknown.OwnerUserGroupID != nil && *resource.Change.AfterUnknown.OwnerUserGroupID
+
+		// We need one approver to be a member the resource owner group
+		for _, approver := range approvers {
+			if ownerUnknown && isUserGroupMemberInConfig(resource, approver, plan) {
+				continue resources
+			}
+			if !ownerUnknown && isUserGroupMemberInState(resource.Change.After, approver, plan) {
+				continue resources
+			}
+		}
+
+		// No approval found, add error
+		checkResult.errors = append(checkResult.errors, ResultError{
+			Error:   fmt.Sprintf("approval is required from a owner of %s", resource.Address),
+			Address: resourceChange.Address,
+		})
+
+	}
+
+	if len(checkResult.errors) > 0 {
+		checkResult.ok = false
+	}
+
+	return checkResult
+}
+
+func governanceSubscriptionDeleteCheck(
+	resourceChange terraform.ResourceChange,
+	approvers []*terraform.PriorStateResource,
+	plan *terraform.Plan,
+) CheckResult {
+	checkResult := CheckResult{ok: true, errors: []ResultError{}}
+
+	checkResult.errors = append(
+		checkResult.errors,
+		validateApproversFromState(resourceChange.Address, resourceChange.Change.Before, approvers, plan)...,
+	)
+
+	return checkResult
+}
+
+func governanceSubscriptionCheck(
+	resourceChange terraform.ResourceChange,
+	_ *terraform.PriorStateResource,
+	approvers []*terraform.PriorStateResource,
+	plan *terraform.Plan,
+) CheckResult {
+	// For create, approval is required from owners of the resources where the subscription grants access
+	if slices.Contains(resourceChange.Change.Actions, terraform.CreateAction) {
+		return governanceSubscriptionCreateCheck(resourceChange, approvers, plan)
+	}
+
+	return governanceSubscriptionDeleteCheck(resourceChange, approvers, plan)
 }
 
 func validateApproversFromState(
