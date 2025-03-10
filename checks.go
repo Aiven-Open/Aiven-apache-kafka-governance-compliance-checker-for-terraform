@@ -219,6 +219,10 @@ func governanceSubscriptionDeleteCheck(
 		validateApproversFromState(resourceChange.Address, resourceChange.Change.Before, approvers, plan)...,
 	)
 
+	if len(checkResult.errors) > 0 {
+		checkResult.ok = false
+	}
+
 	return checkResult
 }
 
