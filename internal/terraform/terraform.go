@@ -81,25 +81,25 @@ type Change struct {
 }
 
 type ResourceChangeValues struct {
-	InternalUserID   *string             `json:"internal_user_id"`
-	ExternalUserID   *string             `json:"external_user_id"`
-	Tag              *[]Tag              `json:"tag"`
-	OwnerUserGroupID *string             `json:"owner_user_group_id"`
-	GroupID          *string             `json:"group_id"`
-	UserID           *string             `json:"user_id"`
-	SubscriptionData *[]SubscriptionData `json:"subscription_data"`
-	Project          *string             `json:"project"`
-	ServiceName      *string             `json:"service_name"`
-	TopicName        *string             `json:"topic_name"`
+	InternalUserID   *string       `json:"internal_user_id"`
+	ExternalUserID   *string       `json:"external_user_id"`
+	Tag              *[]Tag        `json:"tag"`
+	OwnerUserGroupID *string       `json:"owner_user_group_id"`
+	GroupID          *string       `json:"group_id"`
+	UserID           *string       `json:"user_id"`
+	AccessData       *[]AccessData `json:"access_data"`
+	Project          *string       `json:"project"`
+	ServiceName      *string       `json:"service_name"`
+	TopicName        *string       `json:"topic_name"`
 }
 
-type SubscriptionData struct {
-	Project     string            `json:"project"`
-	ServiceName string            `json:"service_name"`
-	Acls        []SubscriptionACL `json:"acls"`
+type AccessData struct {
+	Project     string      `json:"project"`
+	ServiceName string      `json:"service_name"`
+	Acls        []AccessACL `json:"acls"`
 }
 
-type SubscriptionACL struct {
+type AccessACL struct {
 	ResourceName string `json:"resource_name"`
 }
 
@@ -120,7 +120,7 @@ const (
 	AivenKafkaTopic                  ResourceType = "aiven_kafka_topic"
 	AivenExternalIdentity            ResourceType = "aiven_external_identity"
 	AivenOrganizationUserGroupMember ResourceType = "aiven_organization_user_group_member"
-	AivenGovernanceSubscription      ResourceType = "aiven_governance_subscription"
+	AivenGovernanceAccess            ResourceType = "aiven_governance_access"
 )
 
 const (

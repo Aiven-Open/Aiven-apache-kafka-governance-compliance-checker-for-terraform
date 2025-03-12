@@ -32,7 +32,7 @@ var checks = map[terraform.ResourceType][]Check{
 	terraform.AivenKafkaTopic:                  {changeIsRequestedByOwner, changeIsApprovedByOwner},
 	terraform.AivenExternalIdentity:            {},
 	terraform.AivenOrganizationUserGroupMember: {},
-	terraform.AivenGovernanceSubscription:      {governanceSubscriptionCheck},
+	terraform.AivenGovernanceAccess:            {governanceAccessCheck},
 }
 
 func main() {

@@ -119,9 +119,9 @@ func changeIsApprovedByOwner(
 	return checkResult
 }
 
-func isSubscriptionResource(
-	subscriptionData terraform.SubscriptionData,
-	acl terraform.SubscriptionACL,
+func isAccessResource(
+	accessData terraform.AccessData,
+	acl terraform.AccessACL,
 	resource terraform.ResourceChange,
 ) bool {
 	if resource.Type != terraform.AivenKafkaTopic {
@@ -133,11 +133,11 @@ func isSubscriptionResource(
 	}
 
 	after := *resource.Change.After
-	if after.Project != nil && *after.Project != subscriptionData.Project {
+	if after.Project != nil && *after.Project != accessData.Project {
 		return false
 	}
 
-	if after.ServiceName != nil && *after.ServiceName != subscriptionData.ServiceName {
+	if after.ServiceName != nil && *after.ServiceName != accessData.ServiceName {
 		return false
 	}
 
@@ -148,20 +148,20 @@ func isSubscriptionResource(
 	return true
 }
 
-func getSubscriptionResources(
+func getAccessResources(
 	resourceChange terraform.ResourceChange,
 	plan *terraform.Plan,
 ) []terraform.ResourceChange {
 	resources := []terraform.ResourceChange{}
 
-	var subscriptionData terraform.SubscriptionData
-	if resourceChange.Change.After.SubscriptionData != nil {
-		subscriptionData = (*resourceChange.Change.After.SubscriptionData)[0]
+	var accessData terraform.AccessData
+	if resourceChange.Change.After.AccessData != nil {
+		accessData = (*resourceChange.Change.After.AccessData)[0]
 	}
 
-	for _, acl := range subscriptionData.Acls {
+	for _, acl := range accessData.Acls {
 		for _, resource := range plan.ResourceChanges {
-			if isSubscriptionResource(subscriptionData, acl, resource) {
+			if isAccessResource(accessData, acl, resource) {
 				resources = append(resources, resource)
 			}
 		}
@@ -169,7 +169,7 @@ func getSubscriptionResources(
 	return resources
 }
 
-func governanceSubscriptionCreateCheck(
+func governanceAccessCreateCheck(
 	resourceChange terraform.ResourceChange,
 	approvers []*terraform.PriorStateResource,
 	plan *terraform.Plan,
@@ -177,9 +177,9 @@ func governanceSubscriptionCreateCheck(
 
 	checkResult := CheckResult{ok: true, errors: []ResultError{}}
 
-	// Check each subscription resource
+	// Check each access resource
 resources:
-	for _, resource := range getSubscriptionResources(resourceChange, plan) {
+	for _, resource := range getAccessResources(resourceChange, plan) {
 		ownerUnknown := resource.Change.AfterUnknown.OwnerUserGroupID != nil && *resource.Change.AfterUnknown.OwnerUserGroupID
 
 		// We need one approver to be a member the resource owner group
@@ -207,7 +207,7 @@ resources:
 	return checkResult
 }
 
-func governanceSubscriptionDeleteCheck(
+func governanceAccessDeleteCheck(
 	resourceChange terraform.ResourceChange,
 	approvers []*terraform.PriorStateResource,
 	plan *terraform.Plan,
@@ -226,18 +226,18 @@ func governanceSubscriptionDeleteCheck(
 	return checkResult
 }
 
-func governanceSubscriptionCheck(
+func governanceAccessCheck(
 	resourceChange terraform.ResourceChange,
 	_ *terraform.PriorStateResource,
 	approvers []*terraform.PriorStateResource,
 	plan *terraform.Plan,
 ) CheckResult {
-	// For create, approval is required from owners of the resources where the subscription grants access
+	// For create, approval is required from owners of the resources where the access grants access
 	if slices.Contains(resourceChange.Change.Actions, terraform.CreateAction) {
-		return governanceSubscriptionCreateCheck(resourceChange, approvers, plan)
+		return governanceAccessCreateCheck(resourceChange, approvers, plan)
 	}
 
-	return governanceSubscriptionDeleteCheck(resourceChange, approvers, plan)
+	return governanceAccessDeleteCheck(resourceChange, approvers, plan)
 }
 
 func validateApproversFromState(

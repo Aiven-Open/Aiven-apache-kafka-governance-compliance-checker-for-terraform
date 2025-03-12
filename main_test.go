@@ -147,7 +147,7 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					{
-						Address: "aiven_governance_subscription.foo",
+						Address: "aiven_governance_access.foo",
 						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
 					},
 					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
@@ -167,7 +167,7 @@ func TestE2E_PlanWithKnownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					{
-						Address: "aiven_governance_subscription.foo",
+						Address: "aiven_governance_access.foo",
 						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
 					},
 					newApproveError("aiven_kafka_topic.bar[2]", &[]terraform.Tag{}),
@@ -260,7 +260,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					{
-						Address: "aiven_governance_subscription.foo",
+						Address: "aiven_governance_access.foo",
 						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
 					},
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
@@ -279,7 +279,7 @@ func TestE2E_PlanWithUnknownOwnerUserGroupID(t *testing.T) {
 				Ok: false,
 				Errors: []ResultError{
 					{
-						Address: "aiven_governance_subscription.foo",
+						Address: "aiven_governance_access.foo",
 						Error:   "approval is required from a owner of aiven_kafka_topic.foo",
 					},
 					newApproveError("aiven_kafka_topic.foo", &[]terraform.Tag{}),
