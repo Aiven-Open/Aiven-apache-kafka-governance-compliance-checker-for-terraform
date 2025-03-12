@@ -128,8 +128,8 @@
   },
   "resource_changes": [
     {
-      "address": "aiven_governance_subscription.foo",
-      "type": "aiven_governance_subscription",
+      "address": "aiven_governance_access.foo",
+      "type": "aiven_governance_access",
       "name": "foo",
       "provider_name": "registry.terraform.io/aiven/aiven",
       "schema_version": 0,
@@ -137,7 +137,7 @@
         "actions": ["create"],
         "after": {
           "owner_user_group_id": "ug4e3b20cee48",
-          "subscription_data": [{
+          "access_data": [{
             "project": "testproject-hpo9",
             "service_name": "kafka1",
             "acls": [
