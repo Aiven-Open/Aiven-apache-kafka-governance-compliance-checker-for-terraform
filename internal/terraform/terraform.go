@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+// The Plan is marshaled according to the official terraform plan representation:
+// https://developer.hashicorp.com/terraform/internals/json-format#plan-representation
+// Plans can be big, include only what is required.
+
 type Plan struct {
 	ResourceChanges []ResourceChange `json:"resource_changes"`
 	PriorState      PriorState       `json:"prior_state"`
